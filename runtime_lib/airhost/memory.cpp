@@ -1,78 +1,78 @@
-#include "air_host.h"
-#include "air_tensor.h"
+#include "include/air_host.h"
+#include "include/air_tensor.h"
 
 #include <cassert>
 #include <vector>
 #include <cstdio>
 #include <cstring>
 
-#include <xaiengine.h>
+//#include <xaiengine.h>
 
 namespace {
 
-static std::vector<XAieLib_MemInst*> AirAllocations;
-
-}
-
-void* air_mem_alloc(size_t size) {
-  XAieLib_MemInst *mem = XAieLib_MemAllocate(size, 0);
-  if (!mem)
-    return nullptr;
-  AirAllocations.push_back(mem);
-  void *vaddr = (void*)XAieLib_MemGetVaddr(mem);
-  return vaddr;
-}
-
-void air_mem_dealloc(void *vaddr) {
-  for (auto it = AirAllocations.begin(); it != AirAllocations.end(); ) {
-    void *p = (void*)XAieLib_MemGetVaddr(*it);
-    if (p == vaddr) {
-      XAieLib_MemFree(*it);
-      it = AirAllocations.erase(it);
-    }
-    else {
-      ++it;
-    }
-  }
-}
-
-void *air_mem_get_paddr(void *vaddr) {
-  for (auto *m : AirAllocations) {
-    void *p = (void*)XAieLib_MemGetVaddr(m);
-    if (p == vaddr)
-      return (void*)XAieLib_MemGetPaddr(m);
-  }
-  return nullptr;
-}
-
-void *air_mem_get_vaddr(void *paddr) {
-  for (auto *m : AirAllocations) {
-    void *p = (void*)XAieLib_MemGetPaddr(m);
-    if (p == paddr)
-      return (void*)XAieLib_MemGetVaddr(m);
-  }
-  return nullptr;
-}
-
-namespace {
-
-int64_t shim_location_data(air_herd_shim_desc_t *sd, int i, int j, int k) {
-  return sd->location_data[i*8*8 + j*8 + k];
-}
-
-int64_t shim_channel_data(air_herd_shim_desc_t *sd, int i, int j, int k) {
-  return sd->channel_data[i*8*8 + j*8 + k];
-}
-
-}
-
-extern "C" {
-
-extern air_rt_herd_desc_t _air_host_active_herd;
-extern aie_libxaie_ctx_t *_air_host_active_libxaie1;
-extern uint32_t *_air_host_bram_ptr;
-
-}
+//static std::vector<XAieLib_MemInst*> AirAllocations;
+//
+//}
+//
+//void* air_mem_alloc(size_t size) {
+//  XAieLib_MemInst *mem = XAieLib_MemAllocate(size, 0);
+//  if (!mem)
+//    return nullptr;
+//  AirAllocations.push_back(mem);
+//  void *vaddr = (void*)XAieLib_MemGetVaddr(mem);
+//  return vaddr;
+//}
+//
+//void air_mem_dealloc(void *vaddr) {
+//  for (auto it = AirAllocations.begin(); it != AirAllocations.end(); ) {
+//    void *p = (void*)XAieLib_MemGetVaddr(*it);
+//    if (p == vaddr) {
+//      XAieLib_MemFree(*it);
+//      it = AirAllocations.erase(it);
+//    }
+//    else {
+//      ++it;
+//    }
+//  }
+//}
+//
+//void *air_mem_get_paddr(void *vaddr) {
+//  for (auto *m : AirAllocations) {
+//    void *p = (void*)XAieLib_MemGetVaddr(m);
+//    if (p == vaddr)
+//      return (void*)XAieLib_MemGetPaddr(m);
+//  }
+//  return nullptr;
+//}
+//
+//void *air_mem_get_vaddr(void *paddr) {
+//  for (auto *m : AirAllocations) {
+//    void *p = (void*)XAieLib_MemGetPaddr(m);
+//    if (p == paddr)
+//      return (void*)XAieLib_MemGetVaddr(m);
+//  }
+//  return nullptr;
+//}
+//
+//namespace {
+//
+//int64_t shim_location_data(air_herd_shim_desc_t *sd, int i, int j, int k) {
+//  return sd->location_data[i*8*8 + j*8 + k];
+//}
+//
+//int64_t shim_channel_data(air_herd_shim_desc_t *sd, int i, int j, int k) {
+//  return sd->channel_data[i*8*8 + j*8 + k];
+//}
+//
+//}
+//
+//extern "C" {
+//
+//extern air_rt_herd_desc_t _air_host_active_herd;
+//extern aie_libxaie_ctx_t *_air_host_active_libxaie1;
+//extern uint32_t *_air_host_bram_ptr;
+//
+//}
 
 #define HIGH_ADDR(addr)	((addr & 0xffffffff00000000) >> 32)
 #define LOW_ADDR(addr)	(addr & 0x00000000ffffffff)

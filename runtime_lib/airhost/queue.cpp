@@ -7,8 +7,8 @@
 #include <vector>
 #include <iostream>
 
-#include "air_host.h"
-#include "acdc_queue.h"
+#include "include/air_host.h"
+#include "include/acdc_queue.h"
 
 hsa_status_t air_get_agents(void *data) {
   std::vector<air_agent_t> *pAgents = nullptr;
@@ -110,6 +110,58 @@ hsa_status_t air_queue_create(uint32_t size, uint32_t type, queue_t **queue, uin
   }
 
   uint64_t base_address_offset = q->base_address - paddr_aligned;
+  q->base_address_vaddr = ((size_t)bram_ptr) + base_address_offset;
+  q->base_address_paddr = q->base_address;
+
+  *queue = q;
+  return HSA_STATUS_SUCCESS;
+}
+
+hsa_status_t air5000_queue_create(uint32_t size, uint32_t type, queue_t **queue, uint64_t paddr, char bar_dev_file[100])
+{
+  //int fd = open("/dev/mem", O_RDWR | O_SYNC);
+  //if (fd == -1)
+  //  return HSA_STATUS_ERROR_INVALID_QUEUE_CREATION;
+
+  uint64_t paddr_aligned = paddr & 0xfffffffffffff000;
+  uint64_t paddr_offset = paddr & 0x0000000000000fff;
+
+  //uint64_t *bram_ptr = (uint64_t *)mmap(NULL, 0x8000, PROT_READ|PROT_WRITE, MAP_SHARED, fd, paddr_aligned);
+  int fd = open(bar_dev_file, O_RDWR | O_SYNC);
+  if (fd == -1)
+    return HSA_STATUS_ERROR_INVALID_QUEUE_CREATION;
+ 
+  // Map the memory region into userspace
+  void *map_axib_base = mmap(NULL,            // virtual address
+                      0x8000,                 // length
+                      PROT_READ | PROT_WRITE, // prot
+                      MAP_SHARED,             // flags
+                      fd,                     // device fd
+                      paddr_aligned);         // offset
+  uint64_t *bram_ptr = (uint64_t *)(map_axib_base);
+
+  printf("Opened shared memory paddr: %p vaddr: %p\n", paddr, bram_ptr);
+  uint64_t q_paddr = bram_ptr[paddr_offset/sizeof(uint64_t)] - AIR_VCK190_SHMEM_BASE;
+  uint64_t q_offset = q_paddr;
+  queue_t *q = (queue_t*)( ((size_t)bram_ptr) + q_offset /*+ paddr_offset */);
+  printf("Queue location at paddr: %p vaddr: %p\n", bram_ptr[paddr_offset/sizeof(uint64_t)]-AIR_VCK190_SHMEM_BASE, q);
+
+  if (q->id !=  0xacdc) {
+    printf("%s error invalid id %x\n", __func__, q->id);
+    return HSA_STATUS_ERROR_INVALID_QUEUE_CREATION;
+  }
+
+  if (q->size != size) {
+    printf("%s error size mismatch %d\n", __func__, q->size);
+    return HSA_STATUS_ERROR_INVALID_QUEUE_CREATION;
+  }
+
+  if (q->type != type) {
+    printf("%s error type mismatch %d\n", __func__, q->type);
+    return HSA_STATUS_ERROR_INVALID_QUEUE_CREATION;
+  }
+
+  uint64_t base_address_offset = q->base_address - AIR_VCK190_SHMEM_BASE;
   q->base_address_vaddr = ((size_t)bram_ptr) + base_address_offset;
   q->base_address_paddr = q->base_address;
 
