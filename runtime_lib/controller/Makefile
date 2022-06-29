@@ -9,10 +9,15 @@ SCRIPT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD_DIR := build
 APP_NAME := acdc_agent
 
-all: ${BUILD_DIR}/${APP_NAME}/acdc_agent.elf 
+all: ${BUILD_DIR}/${APP_NAME}/acdc_agent.elf fixup 
 
 ${BUILD_DIR}/${APP_NAME}/acdc_agent.elf : ../../platforms/xilinx_vck5000_air/vivado/xilinx_vck5000_air.xsa
 	rm -rf build && xsct build.tcl
+
+fixup: ${BUILD_DIR}/${APP_NAME}/src/lscript.ld
+	echo -e "\nModifying $< to increase the stack and heap size\n"; \
+	sed -i 's/_SIZE : 0x2000/_SIZE : 0x4000/g' $<; \
+	cd ${BUILD_DIR}/${APP_NAME}/Debug && make acdc_agent.elf
 
 clean:
 	rm -rf build
