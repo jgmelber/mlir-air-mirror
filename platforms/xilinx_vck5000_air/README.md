@@ -2,6 +2,6 @@
 
 ## Prerequisites:
 
-- [VCK5000 board files](https://www.xilinx.com/bin/public/openDownload?filename=VCK5000_board_files_cips.zip)
+- VCK5000 board files: `/group/xrlabs2/jmelber/board_files/vck5000_board_files_prod_si_20211201.zip`
 - Vivado 2022.1
 - Vitis 2022.1
