@@ -486,7 +486,6 @@ u64 getTileAddr(u16 ColIdx, u16 RowIdx)
   //  ArrOffset = XAIE_BASE_ARRAY_ADDR_OFFSET;
   //#endif
 
-  ////TileAddr = (u64)((0x20000000000) |
   //TileAddr = (u64)((ArrOffset <<
   //    XAIEGBL_TILE_ADDR_ARR_SHIFT) |
 	//(ColIdx << XAIEGBL_TILE_ADDR_COL_SHIFT) |
@@ -507,7 +506,7 @@ static inline u32 in32(u64 Addr)
 static inline void out32(u64 Addr, u32 Value)
 {
   XAie_Write32(&(_xaie->DevInst), Addr, Value);
-  ///* write 32 bit value to specified address */
+  /* write 32 bit value to specified address */
   //volatile u32 *LocalAddr = (volatile u32 *)Addr;
   //*LocalAddr = Value;
 }
@@ -667,6 +666,8 @@ int xaie_shim_dma_push_bd(uint64_t TileAddr, int direction, int channel, int col
                                                 // Secure bit [4] = 1 (set)
   xaie::out32(TileAddr + base_address + 0x10, 0x0);
 
+  u32 config = xaie::in32(TileAddr + base_address + 0xC);
+  xil_printf("New BD addr %08x ctrl %08x config %08x\n\r",LOW_ADDR((u64)addr),control,config);
 
   // Check if the channel is running or not
   uint32_t precheck_status = (xaie::in32(TileAddr + status_register_offset) >> status_mask_shift) & 0b11;
@@ -1085,27 +1086,32 @@ void handle_packet_sg_cdma(dispatch_packet_t *pkt)
   //uint32_t after = 0;
   // packet is in active phase
   packet_set_active(pkt, true);
+  volatile uint32_t *cdmab = (volatile uint32_t *)(cfg_cdma_base);
   u32 start_row = (pkt->arg[3] >>  0) & 0xff;
   u32 num_rows  = (pkt->arg[3] >>  8) & 0xff;
   u32 start_col = (pkt->arg[3] >> 16) & 0xff;
   u32 num_cols  = (pkt->arg[3] >> 24) & 0xff;
+  for (uint c=start_col; c<start_col+num_cols; c++) 
+    for (uint r=start_row; r<start_row+num_rows; r++) 
+      air_printf("CMDA tile addr 0x%016lx\n\r",xaie::getTileAddr(c,r));
+  //air_printf("CDMA reset.\n\r");
+  //  cdmab[0] |= 0x4;
+  //  cdmab[0] &= 0x4;
   air_printf("CDMA start.\n\r");
   for (uint c=start_col; c<start_col+num_cols; c++) {
     for (uint r=start_row; r<start_row+num_rows; r++) {
-      int st = xaie::in32(xaie::getTileAddr(c,r) + 0x00032004);
-      air_printf("Status col %d row %d. 0x%x\n\r",c,r,st&0x3);
-      if ((0x3&st) != 0x2) {
+      //int st = xaie::in32(xaie::getTileAddr(c,r) + 0x00032004);
+      //if ((0x3&st) != 0x2) {
         air_printf("Resetting col %d row %d. 0x%lx == 0x%lx\n\r",c,r,xaie::getTileAddr(c,r),_XAie_GetTileAddr(&(_xaie->DevInst), r, c));
         xaie::out32(xaie::getTileAddr(c,r) + 0x00032000, 0x2);
         air_printf("Done resetting col %d row %d.\n\r",c,r);
-      }
+      //}
     }
 	air_printf("Resetting column %d.\n\r",c);
     xaie::out32(xaie::getTileAddr(c,0) + 0x00036048, !!1); // 1 == ResetEnable
     xaie::out32(xaie::getTileAddr(c,0) + 0x00036048, !!0); // 0 == ResetDisable
 	air_printf("Done resetting column %d.\n\r",c);
   }
-  volatile uint32_t *cdmab = (volatile uint32_t *)(cfg_cdma_base);
   uint32_t status = cdmab[1];
   air_printf("CMDA raw %x idle %x\n\r",status,status&2);
   //timerCtrl[0] = 1<<31;
@@ -1113,6 +1119,7 @@ void handle_packet_sg_cdma(dispatch_packet_t *pkt)
   uint64_t daddr = (pkt->arg[0]);
   uint64_t saddr = (pkt->arg[1]);
   uint32_t bytes = (pkt->arg[2]);
+  air_printf("CMDA daddr 0x%016lx saddr 0x%016lx\n\r",daddr,saddr);
   //after = timer[0];
   cdmab[0] = 0x0; // unset SG mode 
   if (bytes >= 0xffffff) { // SG
@@ -1128,7 +1135,12 @@ void handle_packet_sg_cdma(dispatch_packet_t *pkt)
     cdmab[9] = daddr>>32;  
     cdmab[10] = bytes;
   }
-  while (!(cdmab[1]&2));// air_printf("CDMA wait...\n\r");
+  int cnt = 10;
+  while (!(cdmab[1]&2)&&cnt--) air_printf("SG CDMA wait... %x\n\r",cdmab[1]);
+  if (!cnt) {
+    cdmab[0] |= 0x4;
+    cdmab[0] &= 0x4;
+  }
   for (uint c=start_col; c<start_col+num_cols; c++) {
     for (uint r=start_row; r<=start_row+num_rows; r++) {
       for (int l=0; l<16; l++)
@@ -1144,12 +1156,39 @@ void handle_packet_cdma(dispatch_packet_t *pkt)
 {
   // packet is in active phase
   packet_set_active(pkt, true);
+  u32 start_row = (pkt->arg[3] >>  0) & 0xff;
+  u32 num_rows  = (pkt->arg[3] >>  8) & 0xff;
+  u32 start_col = (pkt->arg[3] >> 16) & 0xff;
+  u32 num_cols  = (pkt->arg[3] >> 24) & 0xff;
+  u32 op        = (pkt->arg[3] >> 32) & 0xff;
+  if (op == 2) {
+  for (uint c=start_col; c<start_col+num_cols; c++) {
+    for (uint r=start_row; r<start_row+num_rows; r++) {
+      int st = xaie::in32(xaie::getTileAddr(c,r) + 0x00032004);
+      air_printf("Status col %d row %d. 0x%x\n\r",c,r,st&0x3);
+      if ((0x3&st) != 0x2) {
+        air_printf("Resetting col %d row %d. 0x%lx == 0x%lx\n\r",c,r,xaie::getTileAddr(c,r),_XAie_GetTileAddr(&(_xaie->DevInst), r, c));
+        xaie::out32(xaie::getTileAddr(c,r) + 0x00032000, 0x2);
+        air_printf("Done resetting col %d row %d.\n\r",c,r);
+      }
+    }
+  }
+  }
+  if (op == 1) {
+  for (uint c=start_col; c<start_col+num_cols; c++) {
+	air_printf("Resetting column %d.\n\r",c);
+    xaie::out32(xaie::getTileAddr(c,0) + 0x00036048, !!1); // 1 == ResetEnable
+    xaie::out32(xaie::getTileAddr(c,0) + 0x00036048, !!0); // 0 == ResetDisable
+	air_printf("Done resetting column %d.\n\r",c);
+  }
+  }
   volatile uint32_t *cdmab = (volatile uint32_t *)(cfg_cdma_base);
-  //uint32_t status = cdmab[1];
-  //air_printf("CMDA raw %x idle %x\n\r",status,status&2);
+  uint32_t status = cdmab[1];
+  air_printf("CMDA raw %x idle %x\n\r",status,status&2);
   uint64_t daddr = (pkt->arg[0]);
   uint64_t saddr = (pkt->arg[1]);
   uint32_t bytes = (pkt->arg[2]);
+  air_printf("CMDA dst %lx src %lx\n\r",daddr,saddr);
   cdmab[0] = 0x0; // unset SG mode 
   cdmab[6] = saddr&0xffffffff; 
   cdmab[7] = saddr>>32; 
@@ -1157,6 +1196,15 @@ void handle_packet_cdma(dispatch_packet_t *pkt)
   cdmab[9] = daddr>>32;  
   cdmab[10] = bytes;
   while (!(cdmab[1]&2)) air_printf("CMDA wait...\n\r");
+  if (op == 2) {
+  for (uint c=start_col; c<start_col+num_cols; c++) {
+    for (uint r=start_row; r<=start_row+num_rows; r++) {
+      for (int l=0; l<16; l++)
+        xaie::maskpoll32(xaie::getTileAddr(c,r) + 0x0001E020 + 0x80*l, 0x1, 0x1, 0); 
+      xaie::out32(xaie::getTileAddr(c,r) + 0x00032000, 0x1); 
+    }
+  }
+  }
 }
 
 void handle_packet_xaie_lock(dispatch_packet_t *pkt)
@@ -1807,7 +1855,7 @@ int main()
   xaie2::mlir_aie_init_libxaie(_xaie);
   int err = xaie2::mlir_aie_init_device(_xaie);
   if (err)
-	  xil_printf("ERROR initializing device.\n\r");
+	  xil_printf("ERROR initializing device.\n\r"); 
 
   //microblaze_get_pvr(&pvr);
   int user1 = 1;//MICROBLAZE_PVR_USER1(pvr);

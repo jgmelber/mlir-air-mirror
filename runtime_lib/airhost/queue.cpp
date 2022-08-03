@@ -265,6 +265,42 @@ hsa_status_t air_packet_hello(dispatch_packet_t *pkt, uint64_t value) {
   return HSA_STATUS_SUCCESS;
 }
 
+hsa_status_t air_packet_print_dma_status(dispatch_packet_t *pkt, uint8_t col, uint8_t row) {
+  initialize_packet(pkt);
+
+  pkt->arg[0]  = col;
+  pkt->arg[1]  = row;
+
+  pkt->type  = AIR_PKT_TYPE_TDMA_STATUS;
+  pkt->header = (HSA_PACKET_TYPE_AGENT_DISPATCH << HSA_PACKET_HEADER_TYPE);
+
+  return HSA_STATUS_SUCCESS;
+}
+
+hsa_status_t air_packet_print_shimdma_status(dispatch_packet_t *pkt, uint8_t col) {
+  initialize_packet(pkt);
+
+  pkt->arg[0]  = col;
+  pkt->arg[1]  = 0;
+
+  pkt->type  = AIR_PKT_TYPE_SDMA_STATUS;
+  pkt->header = (HSA_PACKET_TYPE_AGENT_DISPATCH << HSA_PACKET_HEADER_TYPE);
+
+  return HSA_STATUS_SUCCESS;
+}
+
+hsa_status_t air_packet_print_tile_status(dispatch_packet_t *pkt, uint8_t col, uint8_t row) {
+  initialize_packet(pkt);
+
+  pkt->arg[0]  = col;
+  pkt->arg[1]  = row;
+
+  pkt->type  = AIR_PKT_TYPE_CORE_STATUS;
+  pkt->header = (HSA_PACKET_TYPE_AGENT_DISPATCH << HSA_PACKET_HEADER_TYPE);
+
+  return HSA_STATUS_SUCCESS;
+}
+
 hsa_status_t air_packet_put_stream(dispatch_packet_t *pkt, uint64_t stream, uint64_t value) {
   initialize_packet(pkt);
 
