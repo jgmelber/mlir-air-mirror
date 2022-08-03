@@ -1089,6 +1089,17 @@ uint64_t cfg_cdma_base = 0x000044A00000UL;
 void handle_packet_sg_cdma(dispatch_packet_t *pkt) {
   // packet is in active phase
   packet_set_active(pkt, true);
+  u32 start_row = (pkt->arg[3] >>  0) & 0xff;
+  u32 num_rows  = (pkt->arg[3] >>  8) & 0xff;
+  u32 start_col = (pkt->arg[3] >> 16) & 0xff;
+  u32 num_cols  = (pkt->arg[3] >> 24) & 0xff;
+  for (int c=start_col; c<start_col+num_cols; c++) {
+    for (int r=start_row; r<start_row+num_rows; r++) {
+      xaie::out32(xaie::getTileAddr(c,r) + 0x00032000, 0x2); 
+    }
+    xaie::out32(xaie::getTileAddr(c,0) + 0x00036048, !!1); // 1 == ResetEnable
+    xaie::out32(xaie::getTileAddr(c,0) + 0x00036048, !!0); // 0 == ResetDisable
+  }
   volatile uint32_t *cdmab = (volatile uint32_t *)(cfg_cdma_base);
   u32 start_row = (pkt->arg[3] >> 0) & 0xff;
   u32 num_rows = (pkt->arg[3] >> 8) & 0xff;
