@@ -10,8 +10,8 @@
 
 #include <string>
 
-#define XAIE_NUM_ROWS 8
-#define XAIE_NUM_COLS 50
+//#define XAIE_NUM_ROWS 8
+//#define XAIE_NUM_COLS 50
 
 // temporary solution to stash some state
 extern "C" {
@@ -24,7 +24,7 @@ air_module_handle_t _air_host_active_module = (air_module_handle_t)nullptr;
 }
 
 aie_libxaie_ctx_t *
-air_init_libxaie1()
+air_init_libxaie1(volatile void* base_va)
 {
   if (_air_host_active_libxaie1)
     return _air_host_active_libxaie1;
@@ -34,12 +34,32 @@ air_init_libxaie1()
   if (!xaie)
     return 0;
 
-  XAIEGBL_HWCFG_SET_CONFIG((&xaie->AieConfig),
-                           XAIE_NUM_ROWS, XAIE_NUM_COLS, 0x800);
-  XAieGbl_HwInit(&xaie->AieConfig);
-  xaie->AieConfigPtr = XAieGbl_LookupConfig(XPAR_AIE_DEVICE_ID);
-  XAieGbl_CfgInitialize(&xaie->AieInst,
-                        &xaie->TileInst[0][0], xaie->AieConfigPtr);
+  xaie->AieConfigPtr.AieGen = XAIE_DEV_GEN_AIE;
+  xaie->AieConfigPtr.BaseAddr = (uint64_t)base_va;
+  xaie->AieConfigPtr.ColShift = XAIE_COL_SHIFT;
+  xaie->AieConfigPtr.RowShift = XAIE_ROW_SHIFT;
+  xaie->AieConfigPtr.NumRows = XAIE_NUM_ROWS;
+  xaie->AieConfigPtr.NumCols = XAIE_NUM_COLS;
+  xaie->AieConfigPtr.ShimRowNum = XAIE_SHIM_ROW;
+  xaie->AieConfigPtr.MemTileRowStart = XAIE_RES_TILE_ROW_START;
+  xaie->AieConfigPtr.MemTileNumRows = XAIE_RES_TILE_NUM_ROWS;
+  xaie->AieConfigPtr.AieTileRowStart = XAIE_AIE_TILE_ROW_START;
+  xaie->AieConfigPtr.AieTileNumRows = XAIE_AIE_TILE_NUM_ROWS;
+  xaie->AieConfigPtr.PartProp = {0};
+  xaie->DevInst = {0};
+
+  XAie_CfgInitialize(&(xaie->DevInst), &(xaie->AieConfigPtr));
+  XAie_PmRequestTiles(&(xaie->DevInst), NULL, 0);
+  XAie_Finish(&(xaie->DevInst));
+  XAie_CfgInitialize(&(xaie->DevInst), &(xaie->AieConfigPtr));
+  XAie_PmRequestTiles(&(xaie->DevInst), NULL, 0);
+
+  //XAIEGBL_HWCFG_SET_CONFIG((&xaie->AieConfig),
+  //                         XAIE_NUM_ROWS, XAIE_NUM_COLS, 0x800);
+  //XAieGbl_HwInit(&xaie->AieConfig);
+  //xaie->AieConfigPtr = XAieGbl_LookupConfig(XPAR_AIE_DEVICE_ID);
+  //XAieGbl_CfgInitialize(&xaie->AieInst,
+  //                      &xaie->TileInst[0][0], xaie->AieConfigPtr);
 
   _air_host_active_libxaie1 = xaie;
   return xaie;
@@ -48,8 +68,10 @@ air_init_libxaie1()
 void
 air_deinit_libxaie1(aie_libxaie_ctx_t *xaie)
 {
-  if (xaie == _air_host_active_libxaie1)
+  if (xaie == _air_host_active_libxaie1) {
+    XAie_Finish(&(xaie->DevInst));
     _air_host_active_libxaie1 = nullptr;
+  }
   free(xaie);
 }
 
@@ -76,12 +98,12 @@ air_module_load_from_file(const char* filename, queue_t *q)
 
   assert(_air_host_active_herd.herd_desc);
 
-  int fd = open("/dev/mem", O_RDWR | O_SYNC);
-  assert(fd != -1 && "Failed to open /dev/mem");
+  int fd = open("/sys/bus/pci/devices/0000:21:00.0/resource4", O_RDWR | O_SYNC);
+  assert(fd != -1 && "Failed to open /sys/bus/pci/devices/0000:21:00.0/resource4");
 
   _air_host_bram_ptr = (uint32_t *)mmap(NULL, 0x8000, PROT_READ|PROT_WRITE,
                                         MAP_SHARED, fd,
-                                        AIR_VCK190_SHMEM_BASE+0x4000);
+                                        0x4000);
   assert(_air_host_bram_ptr && "Failed to map scratch bram location");
 
   return (air_module_handle_t)_handle;

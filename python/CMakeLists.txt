@@ -55,18 +55,18 @@ declare_mlir_python_extension(AirPythonExtensions.MLIR
     LLVMSupport
 )
 
-declare_mlir_python_extension(AirPythonExtensions.AIRRt
-  MODULE_NAME _airRt
-  ADD_TO_PARENT AirPythonExtensions
-  ROOT_DIR ../runtime_lib/python
-  SOURCES
-    Module.cpp
-    LibAirHostModule.cpp
-  EMBED_CAPI_LINK_LIBS
-    AIRCAPI
-  PRIVATE_LINK_LIBS
-    LLVMSupport
-)
+#declare_mlir_python_extension(AirPythonExtensions.AIRRt
+#  MODULE_NAME _airRt
+#  ADD_TO_PARENT AirPythonExtensions
+#  ROOT_DIR ../runtime_lib/python
+#  SOURCES
+#    Module.cpp
+#    LibAirHostModule.cpp
+#  EMBED_CAPI_LINK_LIBS
+#    AIRCAPI
+#  PRIVATE_LINK_LIBS
+#    LLVMSupport
+#)
 
 ################################################################################
 # Generate packages and shared library
