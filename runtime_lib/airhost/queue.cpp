@@ -7,8 +7,9 @@
 #include <vector>
 #include <iostream>
 
-#include "air_host.h"
 #include "acdc_queue.h"
+#include "air_host.h"
+#include "airbin.h"
 
 hsa_status_t air_get_agents(void *data) {
   std::vector<air_agent_t> *pAgents = nullptr;
@@ -380,3 +381,30 @@ hsa_status_t air_packet_barrier_or(barrier_or_packet_t *pkt,
   return HSA_STATUS_SUCCESS;
 }
 
+int air_load_airbin(queue_t *q, const char *filename, uint8_t column) {
+
+  XAieLib_MemSyncForCPU(mem);
+  uint64_t last_td =
+      airbin2mem(infile, bd_ptr, (uint32_t *)bd_paddr, bram_ptr, paddr, col);
+  XAieLib_MemSyncForDev(mem);
+  // Send configuration packet to MicroBlaze
+  uint64_t wr_idx = queue_add_write_index(q, 1);
+  uint64_t packet_id = wr_idx % q->size;
+  dispatch_packet_t *pkt =
+      reinterpret_cast<dispatch_packet_t *>(q->base_address_vaddr) + packet_id;
+  air_packet_cdma_memcpy(pkt, last_td, uint64_t(bd_paddr), 0xffffffff);
+  pkt->type = 0x31;
+  pkt->arg[3] = 0;
+  pkt->arg[3] |= ((uint64_t)num_cols) << 24;
+  pkt->arg[3] |= ((uint64_t)start_col) << 16;
+  pkt->arg[3] |= ((uint64_t)num_rows) << 8;
+  pkt->arg[3] |= ((uint64_t)start_row);
+
+  struct timespec ts_start;
+  struct timespec ts_end;
+  clock_gettime(CLOCK_BOOTTIME, &ts_start);
+  air_queue_dispatch_and_wait(q, wr_idx, pkt);
+  clock_gettime(CLOCK_BOOTTIME, &ts_end);
+
+  printf("config time: %0.8f sec\n", time_spec_diff(ts_start, ts_end));
+}

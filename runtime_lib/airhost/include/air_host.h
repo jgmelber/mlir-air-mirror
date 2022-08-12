@@ -163,6 +163,7 @@ void* air_mem_get_vaddr(void *paddr);
 
 void air_mem_dealloc(void *vaddr);
 
+int air_load_airbin(queue_t *, const char *filename, uint8_t col);
 }
 
 #endif // AIR_HOST_H
