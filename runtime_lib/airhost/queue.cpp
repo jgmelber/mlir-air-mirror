@@ -482,6 +482,14 @@ hsa_status_t air_packet_barrier_or(barrier_or_packet_t *pkt,
 
 int air_load_airbin(queue_t *q, const char *filename, uint8_t column) {
 
+  // We need to do our own memory allocation.
+  XAieLib_MemInst *mem = XAieLib_MemAllocate(2 * 65536, XAIELIB_MEM_ATTR_CACHE);
+  volatile uint32_t *bram_ptr = (volatile uint32_t *)XAieLib_MemGetVaddr(mem);
+  auto *paddr = reinterpret_cast<uint32_t *>(XAieLib_MemGetPaddr(mem));
+  volatile auto *bd_ptr = static_cast<volatile uint32_t *>(mmap(
+      NULL, 0x8000, PROT_READ | PROT_WRITE, MAP_SHARED, fd, BD_ADDR));
+  auto bd_paddr = uint64_t(BD_ADDR);
+
   XAieLib_MemSyncForCPU(mem);
   uint64_t last_td =
       airbin2mem(infile, bd_ptr, (uint32_t *)bd_paddr, bram_ptr, paddr, col);
@@ -504,6 +512,10 @@ int air_load_airbin(queue_t *q, const char *filename, uint8_t column) {
   clock_gettime(CLOCK_BOOTTIME, &ts_start);
   air_queue_dispatch_and_wait(q, wr_idx, pkt);
   clock_gettime(CLOCK_BOOTTIME, &ts_end);
+
+  static constexpr auto time_spec_diff = [](struct timespec &start, struct timespec &end) {
+	  return (end.tv_sec - start.tv_sec) + 1e-9 * (end.tv_nsec - start.tv_nsec);
+  };
 
   printf("config time: %0.8f sec\n", time_spec_diff(ts_start, ts_end));
 }
