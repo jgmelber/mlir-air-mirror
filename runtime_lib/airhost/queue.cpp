@@ -400,11 +400,11 @@ int air_load_airbin(queue_t *q, const char *filename, uint8_t column) {
 
   std::ifstream infile{filename};
 
-  auto airbin_size = readairbinsize(infile);
+  auto airbin_size = readairbinsize(infile, column);
 
   XAieLib_MemSyncForCPU(mem);
   uint64_t last_td =
-      airbin2mem(infile, bd_ptr, (uint32_t *)bd_paddr, bram_ptr, paddr, airbin_size.start_col + column);
+      airbin2mem(infile, bd_ptr, (uint32_t *)bd_paddr, bram_ptr, paddr, airbin_size.start_col);
   XAieLib_MemSyncForDev(mem);
   // Send configuration packet to MicroBlaze
   uint64_t wr_idx = queue_add_write_index(q, 1);
