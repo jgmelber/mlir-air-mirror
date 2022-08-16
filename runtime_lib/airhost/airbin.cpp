@@ -92,7 +92,7 @@ airbin_size readairbinsize(std::ifstream &infile, uint8_t column_offset) {
       auto row_num = config_header.ch_tile & 0x1FU;
       auto col_num = (config_header.ch_tile >> 5u) & 0x3FU;
 
-      tiles.emplace(col_num, row_num);
+      tiles.emplace_back(col_num, row_num);
     } 
     next_chcfg_idx++;
   }
