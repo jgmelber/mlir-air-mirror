@@ -503,7 +503,7 @@ int air_load_airbin(queue_t *q, const char *filename, uint8_t column) {
 
   XAieLib_MemSyncForCPU(mem);
   uint64_t last_td =
-      airbin2mem(infile, bd_ptr, (uint32_t *)bd_paddr, bram_ptr, paddr, airbin_size.start_col);
+      airbin2mem(infile, bd_ptr, (uint32_t *)bd_paddr, bram_ptr, paddr, airbin_size.start_col + column);
   XAieLib_MemSyncForDev(mem);
   // Send configuration packet to MicroBlaze
   uint64_t wr_idx = queue_add_write_index(q, 1);
