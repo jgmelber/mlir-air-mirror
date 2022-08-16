@@ -529,4 +529,5 @@ int air_load_airbin(queue_t *q, const char *filename, uint8_t column) {
   };
 
   printf("config time: %0.8f sec\n", time_spec_diff(ts_start, ts_end));
+  return 0;
 }
