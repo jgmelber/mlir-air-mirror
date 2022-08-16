@@ -1,9 +1,12 @@
 
 #include "include/airbin.h"
 #include "include/acdc_queue.h"
+#include <algorithm> // minmax_element
 #include <cassert>
 #include <cstdint>
 #include <fstream>
+#include <set>
+#include <utility> // pair
 
 // Note that the file header we store ignores the magic bytes.
 struct Air64_Fhdr {
@@ -78,7 +81,7 @@ static Air64_Chdr read_section_header(std::ifstream &infile,
   return config_header;
 }
 
-airbin_size readairbinsize(std::ifstream &infile) {
+airbin_size readairbinsize(std::ifstream &infile, uint8_t column_offset) {
   std::set<std::pair<uint8_t, uint8_t>> tiles;
   uint32_t next_chcfg_idx = 0;
   Air64_Fhdr file_header = read_file_header(infile);
@@ -140,6 +143,14 @@ uint64_t airbin2mem(std::ifstream &infile, volatile uint32_t *tds_va,
         std::string line_desc;
         std::getline(infile, line_desc);
       }
+#ifdef XAIE_BASE_ARRAY_ADDR_OFFSET
+static constexpr uint64_t array_offset =
+    static_cast<uint64_t>(XAIE_BASE_ARRAY_ADDR_OFFSET)
+    << XAIEGBL_TILE_ADDR_ARR_SHIFT;
+#else
+static constexpr uint64_t array_offset =
+    static_cast<uint64_t>(XAIE_ADDR_ARRAY_OFF) << XAIEGBL_TILE_ADDR_ARR_SHIFT;
+#endif
       auto core =
           array_offset | (static_cast<uint64_t>(config_header.ch_tile) << 18u);
       uint64_t da = uint64_t(core + config_header.ch_addr);
