@@ -499,9 +499,11 @@ int air_load_airbin(queue_t *q, const char *filename, uint8_t column) {
 
   std::ifstream infile{filename};
 
+  auto airbin_size = readairbinsize(infile);
+
   XAieLib_MemSyncForCPU(mem);
   uint64_t last_td =
-      airbin2mem(infile, bd_ptr, (uint32_t *)bd_paddr, bram_ptr, paddr, col);
+      airbin2mem(infile, bd_ptr, (uint32_t *)bd_paddr, bram_ptr, paddr, airbin_size.start_col);
   XAieLib_MemSyncForDev(mem);
   // Send configuration packet to MicroBlaze
   uint64_t wr_idx = queue_add_write_index(q, 1);
@@ -511,10 +513,10 @@ int air_load_airbin(queue_t *q, const char *filename, uint8_t column) {
   air_packet_cdma_memcpy(pkt, last_td, uint64_t(bd_paddr), 0xffffffff);
   pkt->type = 0x31;
   pkt->arg[3] = 0;
-  pkt->arg[3] |= ((uint64_t)num_cols) << 24;
-  pkt->arg[3] |= ((uint64_t)start_col) << 16;
-  pkt->arg[3] |= ((uint64_t)num_rows) << 8;
-  pkt->arg[3] |= ((uint64_t)start_row);
+  pkt->arg[3] |= ((uint64_t)airbin_size.num_cols) << 24u;
+  pkt->arg[3] |= ((uint64_t)airbin_size.start_col) << 16u;
+  pkt->arg[3] |= ((uint64_t)airbin_size.num_rows) << 8u;
+  pkt->arg[3] |= ((uint64_t)airbin_size.start_row);
 
   struct timespec ts_start;
   struct timespec ts_end;
@@ -522,7 +524,7 @@ int air_load_airbin(queue_t *q, const char *filename, uint8_t column) {
   air_queue_dispatch_and_wait(q, wr_idx, pkt);
   clock_gettime(CLOCK_BOOTTIME, &ts_end);
 
-  constexpr auto time_spec_diff = [](struct timespec &start, struct timespec &end) {
+  auto time_spec_diff = [](struct timespec &start, struct timespec &end) {
 	  return (end.tv_sec - start.tv_sec) + 1e-9 * (end.tv_nsec - start.tv_nsec);
   };
 

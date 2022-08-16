@@ -78,6 +78,37 @@ static Air64_Chdr read_section_header(std::ifstream &infile,
   return config_header;
 }
 
+airbin_size readairbinsize(std::ifstream &infile) {
+  std::set<std::pair<uint8_t, uint8_t>> tiles;
+  uint32_t next_chcfg_idx = 0;
+  Air64_Fhdr file_header = read_file_header(infile);
+  while (next_chcfg_idx < file_header.num_ch) {
+    infile.seekg(file_header.chcfg + 1 + next_chcfg_idx * 9 * 8);
+    Air64_Chdr config_header = read_section_header(infile, column_offset);
+    if (config_header.ch_type) {
+      auto row_num = config_header.ch_tile & 0x1FU;
+      auto col_num = (config_header.ch_tile >> 5u) & 0x3FU;
+
+      tiles.emplace(col_num, row_num);
+    } 
+    next_chcfg_idx++;
+  }
+
+  airbin_size result;
+  result.start_col = tiles.front().first;
+  result.num_cols = (tiles.back().first - result.start_col) + 1u;
+
+  // Min = first, max = second
+  auto minmax_rows = std::minmax_element(
+    tiles.begin(), tiles.end(), [](auto lhs, auto rhs){ return lhs.second < rhs.second; }
+  );
+
+  result.start_row = minmax_rows.first->second;
+  result.num_rows = (minmax_rows.second->second - result.start_row) + 1u;
+
+  return result;
+ }
+
 uint64_t airbin2mem(std::ifstream &infile, volatile uint32_t *tds_va,
                     uint32_t *tds_pa, volatile uint32_t *data_va,
                     uint32_t *data_pa, uint8_t col) {
