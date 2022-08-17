@@ -60,8 +60,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
    return 1
 }
 
-#set_param board.repoPaths /wrk/xcohdnobkup1/jmelber/vck5000/boards/vck5000/production_silicon/1.1
-set_param board.repoPaths ../../VCK5000_board_files_cips/VCK5000_board_files_cips/vck5000/1.0
+set_param board.repoPaths /wrk/xcohdnobkup1/jmelber/vck5000/boards/vck5000/production_silicon/1.1
 
 ################################################################
 # START
@@ -437,8 +436,8 @@ refclk_PROT0_R0_100_MHz_unique1} \
    CONFIG.pf0_bar0_64bit {true} \
    CONFIG.pf0_bar0_enabled {true} \
    CONFIG.pf0_bar0_prefetchable {false} \
-   CONFIG.pf0_bar0_scale {Kilobytes} \
-   CONFIG.pf0_bar0_size {256} \
+   CONFIG.pf0_bar0_scale {Megabytes} \
+   CONFIG.pf0_bar0_size {64} \
    CONFIG.pf0_bar1_64bit {false} \
    CONFIG.pf0_bar1_enabled {false} \
    CONFIG.pf0_bar1_prefetchable {false} \
@@ -448,7 +447,7 @@ refclk_PROT0_R0_100_MHz_unique1} \
    CONFIG.pf0_bar2_enabled {true} \
    CONFIG.pf0_bar2_prefetchable {false} \
    CONFIG.pf0_bar2_scale {Megabytes} \
-   CONFIG.pf0_bar2_size {128} \
+   CONFIG.pf0_bar2_size {512} \
    CONFIG.pf0_bar2_type {Memory} \
    CONFIG.pf0_bar3_64bit {false} \
    CONFIG.pf0_bar3_enabled {false} \
@@ -459,7 +458,7 @@ refclk_PROT0_R0_100_MHz_unique1} \
    CONFIG.pf0_bar4_enabled {true} \
    CONFIG.pf0_bar4_prefetchable {false} \
    CONFIG.pf0_bar4_scale {Megabytes} \
-   CONFIG.pf0_bar4_size {128} \
+   CONFIG.pf0_bar4_size {1} \
    CONFIG.pf0_bar4_type {Memory} \
    CONFIG.pf0_bar5_enabled {false} \
    CONFIG.pf0_bar5_prefetchable {false} \
@@ -479,8 +478,8 @@ refclk_PROT0_R0_100_MHz_unique1} \
    CONFIG.pf1_bar0_64bit {true} \
    CONFIG.pf1_bar0_enabled {true} \
    CONFIG.pf1_bar0_prefetchable {false} \
-   CONFIG.pf1_bar0_scale {Kilobytes} \
-   CONFIG.pf1_bar0_size {256} \
+   CONFIG.pf1_bar0_scale {Megabytes} \
+   CONFIG.pf1_bar0_size {64} \
    CONFIG.pf1_bar1_64bit {false} \
    CONFIG.pf1_bar1_enabled {false} \
    CONFIG.pf1_bar1_prefetchable {false} \
@@ -490,7 +489,7 @@ refclk_PROT0_R0_100_MHz_unique1} \
    CONFIG.pf1_bar2_enabled {true} \
    CONFIG.pf1_bar2_prefetchable {false} \
    CONFIG.pf1_bar2_scale {Megabytes} \
-   CONFIG.pf1_bar2_size {128} \
+   CONFIG.pf1_bar2_size {512} \
    CONFIG.pf1_bar2_type {Memory} \
    CONFIG.pf1_bar3_64bit {false} \
    CONFIG.pf1_bar3_enabled {false} \
@@ -501,7 +500,7 @@ refclk_PROT0_R0_100_MHz_unique1} \
    CONFIG.pf1_bar4_enabled {true} \
    CONFIG.pf1_bar4_prefetchable {false} \
    CONFIG.pf1_bar4_scale {Megabytes} \
-   CONFIG.pf1_bar4_size {128} \
+   CONFIG.pf1_bar4_size {1} \
    CONFIG.pf1_bar4_type {Memory} \
    CONFIG.pf1_bar5_enabled {false} \
    CONFIG.pf1_bar5_prefetchable {false} \
@@ -519,8 +518,8 @@ refclk_PROT0_R0_100_MHz_unique1} \
    CONFIG.pf2_bar0_64bit {true} \
    CONFIG.pf2_bar0_enabled {true} \
    CONFIG.pf2_bar0_prefetchable {false} \
-   CONFIG.pf2_bar0_scale {Kilobytes} \
-   CONFIG.pf2_bar0_size {256} \
+   CONFIG.pf2_bar0_scale {Megabytes} \
+   CONFIG.pf2_bar0_size {64} \
    CONFIG.pf2_bar1_64bit {false} \
    CONFIG.pf2_bar1_enabled {false} \
    CONFIG.pf2_bar1_prefetchable {false} \
@@ -530,7 +529,7 @@ refclk_PROT0_R0_100_MHz_unique1} \
    CONFIG.pf2_bar2_enabled {true} \
    CONFIG.pf2_bar2_prefetchable {false} \
    CONFIG.pf2_bar2_scale {Megabytes} \
-   CONFIG.pf2_bar2_size {128} \
+   CONFIG.pf2_bar2_size {512} \
    CONFIG.pf2_bar2_type {Memory} \
    CONFIG.pf2_bar3_64bit {false} \
    CONFIG.pf2_bar3_enabled {false} \
@@ -541,7 +540,7 @@ refclk_PROT0_R0_100_MHz_unique1} \
    CONFIG.pf2_bar4_enabled {true} \
    CONFIG.pf2_bar4_prefetchable {false} \
    CONFIG.pf2_bar4_scale {Megabytes} \
-   CONFIG.pf2_bar4_size {128} \
+   CONFIG.pf2_bar4_size {1} \
    CONFIG.pf2_bar4_type {Memory} \
    CONFIG.pf2_bar5_enabled {false} \
    CONFIG.pf2_bar5_prefetchable {false} \
@@ -559,8 +558,8 @@ refclk_PROT0_R0_100_MHz_unique1} \
    CONFIG.pf3_bar0_64bit {true} \
    CONFIG.pf3_bar0_enabled {true} \
    CONFIG.pf3_bar0_prefetchable {false} \
-   CONFIG.pf3_bar0_scale {Kilobytes} \
-   CONFIG.pf3_bar0_size {256} \
+   CONFIG.pf3_bar0_scale {Megabytes} \
+   CONFIG.pf3_bar0_size {64} \
    CONFIG.pf3_bar1_64bit {false} \
    CONFIG.pf3_bar1_enabled {false} \
    CONFIG.pf3_bar1_prefetchable {false} \
@@ -570,7 +569,7 @@ refclk_PROT0_R0_100_MHz_unique1} \
    CONFIG.pf3_bar2_enabled {true} \
    CONFIG.pf3_bar2_prefetchable {false} \
    CONFIG.pf3_bar2_scale {Megabytes} \
-   CONFIG.pf3_bar2_size {128} \
+   CONFIG.pf3_bar2_size {512} \
    CONFIG.pf3_bar2_type {Memory} \
    CONFIG.pf3_bar3_64bit {false} \
    CONFIG.pf3_bar3_enabled {false} \
@@ -581,7 +580,7 @@ refclk_PROT0_R0_100_MHz_unique1} \
    CONFIG.pf3_bar4_enabled {true} \
    CONFIG.pf3_bar4_prefetchable {false} \
    CONFIG.pf3_bar4_scale {Megabytes} \
-   CONFIG.pf3_bar4_size {128} \
+   CONFIG.pf3_bar4_size {1} \
    CONFIG.pf3_bar4_type {Memory} \
    CONFIG.pf3_bar5_enabled {false} \
    CONFIG.pf3_bar5_prefetchable {false} \
@@ -597,52 +596,56 @@ refclk_PROT0_R0_100_MHz_unique1} \
    CONFIG.pf3_sub_class_interface_menu {Other_memory_controller} \
    CONFIG.pf3_vendor_id {10EE} \
    CONFIG.pf4_bar0_64bit {true} \
-   CONFIG.pf4_bar0_size {256} \
+   CONFIG.pf4_bar0_scale {Megabytes} \
+   CONFIG.pf4_bar0_size {64} \
    CONFIG.pf4_bar2_64bit {true} \
    CONFIG.pf4_bar2_enabled {true} \
    CONFIG.pf4_bar2_scale {Megabytes} \
-   CONFIG.pf4_bar2_size {128} \
+   CONFIG.pf4_bar2_size {512} \
    CONFIG.pf4_bar2_type {Memory} \
    CONFIG.pf4_bar4_64bit {true} \
    CONFIG.pf4_bar4_enabled {true} \
    CONFIG.pf4_bar4_scale {Megabytes} \
-   CONFIG.pf4_bar4_size {128} \
+   CONFIG.pf4_bar4_size {1} \
    CONFIG.pf4_bar4_type {Memory} \
    CONFIG.pf5_bar0_64bit {true} \
-   CONFIG.pf5_bar0_size {256} \
+   CONFIG.pf5_bar0_scale {Megabytes} \
+   CONFIG.pf5_bar0_size {64} \
    CONFIG.pf5_bar2_64bit {true} \
    CONFIG.pf5_bar2_enabled {true} \
    CONFIG.pf5_bar2_scale {Megabytes} \
-   CONFIG.pf5_bar2_size {128} \
+   CONFIG.pf5_bar2_size {512} \
    CONFIG.pf5_bar2_type {Memory} \
    CONFIG.pf5_bar4_64bit {true} \
    CONFIG.pf5_bar4_enabled {true} \
    CONFIG.pf5_bar4_scale {Megabytes} \
-   CONFIG.pf5_bar4_size {128} \
+   CONFIG.pf5_bar4_size {1} \
    CONFIG.pf5_bar4_type {Memory} \
    CONFIG.pf6_bar0_64bit {true} \
-   CONFIG.pf6_bar0_size {256} \
+   CONFIG.pf6_bar0_scale {Megabytes} \
+   CONFIG.pf6_bar0_size {64} \
    CONFIG.pf6_bar2_64bit {true} \
    CONFIG.pf6_bar2_enabled {true} \
    CONFIG.pf6_bar2_scale {Megabytes} \
-   CONFIG.pf6_bar2_size {128} \
+   CONFIG.pf6_bar2_size {512} \
    CONFIG.pf6_bar2_type {Memory} \
    CONFIG.pf6_bar4_64bit {true} \
    CONFIG.pf6_bar4_enabled {true} \
    CONFIG.pf6_bar4_scale {Megabytes} \
-   CONFIG.pf6_bar4_size {128} \
+   CONFIG.pf6_bar4_size {1} \
    CONFIG.pf6_bar4_type {Memory} \
    CONFIG.pf7_bar0_64bit {true} \
-   CONFIG.pf7_bar0_size {256} \
+   CONFIG.pf7_bar0_scale {Megabytes} \
+   CONFIG.pf7_bar0_size {64} \
    CONFIG.pf7_bar2_64bit {true} \
    CONFIG.pf7_bar2_enabled {true} \
    CONFIG.pf7_bar2_scale {Megabytes} \
-   CONFIG.pf7_bar2_size {128} \
+   CONFIG.pf7_bar2_size {512} \
    CONFIG.pf7_bar2_type {Memory} \
    CONFIG.pf7_bar4_64bit {true} \
    CONFIG.pf7_bar4_enabled {true} \
    CONFIG.pf7_bar4_scale {Megabytes} \
-   CONFIG.pf7_bar4_size {128} \
+   CONFIG.pf7_bar4_size {1} \
    CONFIG.pf7_bar4_type {Memory} \
    CONFIG.pipe_sim {true} \
    CONFIG.sys_reset_polarity {ACTIVE_LOW} \
@@ -958,8 +961,8 @@ proc create_root_design { parentCell } {
 
   set_property -dict [ list \
    CONFIG.DATA_WIDTH {256} \
-   CONFIG.CONNECTIONS {MC_0 { read_bw {5} write_bw {5} read_avg_burst {4} write_avg_burst {4}} M01_AXI { read_bw {5} write_bw {5} read_avg_burst {4} write_avg_burst {4}} } \
-   CONFIG.DEST_IDS {M01_AXI:0x100} \
+   CONFIG.CONNECTIONS {MC_0 { read_bw {5} write_bw {5} read_avg_burst {4} write_avg_burst {4}} M01_AXI { read_bw {5} write_bw {5} read_avg_burst {4} write_avg_burst {4}} M00_AXI { read_bw {5} write_bw {5} read_avg_burst {4} write_avg_burst {4}} } \
+   CONFIG.DEST_IDS {M01_AXI:0x100:M00_AXI:0x140} \
    CONFIG.CATEGORY {pl} \
  ] [get_bd_intf_pins /axi_noc_0/S09_AXI]
 
@@ -1334,7 +1337,10 @@ default} {PULL pullup} {SCHMITT 0} {SLEW slow} {USAGE Reserved}}\
 25}}}\
      PMC_SD0_COHERENCY {0}\
      PMC_SD0_DATA_TRANSFER_MODE {4Bit}\
-     PMC_SD0_PERIPHERAL {{ENABLE 0} {IO {PMC_MIO 13 .. 25}}}\
+     PMC_SD0_PERIPHERAL {{CLK_100_SDR_OTAP_DLY 0x00} {CLK_200_SDR_OTAP_DLY 0x00}\
+{CLK_50_DDR_ITAP_DLY 0x00} {CLK_50_DDR_OTAP_DLY 0x00}\
+{CLK_50_SDR_ITAP_DLY 0x00} {CLK_50_SDR_OTAP_DLY 0x00} {ENABLE\
+0} {IO {PMC_MIO 13 .. 25}}}\
      PMC_SD0_ROUTE_THROUGH_FPD {0}\
      PMC_SD0_SLOT_TYPE {SD 2.0}\
      PMC_SD0_SPEED_MODE {default speed}\
@@ -1343,7 +1349,10 @@ default} {PULL pullup} {SCHMITT 0} {SLEW slow} {USAGE Reserved}}\
 1}}}\
      PMC_SD1_COHERENCY {0}\
      PMC_SD1_DATA_TRANSFER_MODE {4Bit}\
-     PMC_SD1_PERIPHERAL {{ENABLE 0} {IO {PMC_MIO 0 .. 11}}}\
+     PMC_SD1_PERIPHERAL {{CLK_100_SDR_OTAP_DLY 0x00} {CLK_200_SDR_OTAP_DLY 0x00}\
+{CLK_50_DDR_ITAP_DLY 0x00} {CLK_50_DDR_OTAP_DLY 0x00}\
+{CLK_50_SDR_ITAP_DLY 0x00} {CLK_50_SDR_OTAP_DLY 0x00} {ENABLE\
+0} {IO {PMC_MIO 0 .. 11}}}\
      PMC_SD1_ROUTE_THROUGH_FPD {0}\
      PMC_SD1_SLOT_TYPE {SD 2.0}\
      PMC_SD1_SPEED_MODE {default speed}\
@@ -2036,21 +2045,21 @@ default} {PULL pullup} {SCHMITT 0} {SLEW slow} {USAGE Reserved}}\
      SMON_MEAS161 {{ALARM_ENABLE 0} {ALARM_LOWER 0.00} {ALARM_UPPER 2.00} {AVERAGE_EN\
 0} {ENABLE 0} {MODE None} {NAME GT_AVAUX_PKG_103}}\
      SMON_MEAS162 {{ALARM_ENABLE 0} {ALARM_LOWER 0.00} {ALARM_UPPER 2.00} {AVERAGE_EN\
-0} {ENABLE 0} {MODE None} {NAME GT_AVAUX_PKG_103}}\
+0} {ENABLE 0} {MODE {2 V unipolar}} {NAME VCCINT}}\
      SMON_MEAS163 {{ALARM_ENABLE 0} {ALARM_LOWER 0.00} {ALARM_UPPER 2.00} {AVERAGE_EN\
-0} {ENABLE 0} {MODE None} {NAME GT_AVAUX_PKG_103}}\
+0} {ENABLE 0} {MODE {2 V unipolar}} {NAME VCCAUX}}\
      SMON_MEAS164 {{ALARM_ENABLE 0} {ALARM_LOWER 0.00} {ALARM_UPPER 2.00} {AVERAGE_EN\
-0} {ENABLE 0} {MODE None} {NAME GT_AVAUX_PKG_103}}\
+0} {ENABLE 0} {MODE {2 V unipolar}} {NAME VCC_RAM}}\
      SMON_MEAS165 {{ALARM_ENABLE 0} {ALARM_LOWER 0.00} {ALARM_UPPER 2.00} {AVERAGE_EN\
-0} {ENABLE 0} {MODE None} {NAME GT_AVAUX_PKG_103}}\
+0} {ENABLE 0} {MODE {2 V unipolar}} {NAME VCC_SOC}}\
      SMON_MEAS166 {{ALARM_ENABLE 0} {ALARM_LOWER 0.00} {ALARM_UPPER 2.00} {AVERAGE_EN\
-0} {ENABLE 0} {MODE None} {NAME GT_AVAUX_PKG_103}}\
+0} {ENABLE 0} {MODE {2 V unipolar}} {NAME VCC_PSFP}}\
      SMON_MEAS167 {{ALARM_ENABLE 0} {ALARM_LOWER 0.00} {ALARM_UPPER 2.00} {AVERAGE_EN\
-0} {ENABLE 0} {MODE None} {NAME GT_AVAUX_PKG_103}}\
+0} {ENABLE 0} {MODE {2 V unipolar}} {NAME VCC_PSLP}}\
      SMON_MEAS168 {{ALARM_ENABLE 0} {ALARM_LOWER 0.00} {ALARM_UPPER 2.00} {AVERAGE_EN\
-0} {ENABLE 0} {MODE None} {NAME GT_AVAUX_PKG_103}}\
+0} {ENABLE 0} {MODE {2 V unipolar}} {NAME VCCAUX_PMC}}\
      SMON_MEAS169 {{ALARM_ENABLE 0} {ALARM_LOWER 0.00} {ALARM_UPPER 2.00} {AVERAGE_EN\
-0} {ENABLE 0} {MODE None} {NAME GT_AVAUX_PKG_103}}\
+0} {ENABLE 0} {MODE {2 V unipolar}} {NAME VCC_PMC}}\
      SMON_MEAS17 {{ALARM_ENABLE 0} {ALARM_LOWER 0.00} {ALARM_UPPER 2.00} {AVERAGE_EN\
 0} {ENABLE 0} {MODE {2 V unipolar}} {NAME GTY_AVCC_202} {SUPPLY_NUM\
 0}}\
@@ -2374,8 +2383,6 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
   # Create instance: qdma_host_mem, and set properties
   set qdma_host_mem [ create_bd_cell -type ip -vlnv xilinx.com:ip:qdma:4.0 qdma_host_mem ]
   set_property -dict [ list \
-   CONFIG.BASEADDR {0x00001000} \
-   CONFIG.HIGHADDR {0x00001FFF} \
    CONFIG.INS_LOSS_NYQ {15} \
    CONFIG.MAILBOX_ENABLE {false} \
    CONFIG.MSI_X_OPTIONS {MSI-X_External} \
@@ -2456,18 +2463,6 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.axibar2pciebar_3 {0x0000000000000000} \
    CONFIG.axibar2pciebar_4 {0x0000000000000000} \
    CONFIG.axibar2pciebar_5 {0x0000000000000000} \
-   CONFIG.axibar_0 {0x0000000000000000} \
-   CONFIG.axibar_1 {0x0000000000000000} \
-   CONFIG.axibar_2 {0x0000000000000000} \
-   CONFIG.axibar_3 {0x0000000000000000} \
-   CONFIG.axibar_4 {0x0000000000000000} \
-   CONFIG.axibar_5 {0x0000000000000000} \
-   CONFIG.axibar_highaddr_0 {0x0000000000000000} \
-   CONFIG.axibar_highaddr_1 {0x0000000000000000} \
-   CONFIG.axibar_highaddr_2 {0x0000000000000000} \
-   CONFIG.axibar_highaddr_3 {0x0000000000000000} \
-   CONFIG.axibar_highaddr_4 {0x0000000000000000} \
-   CONFIG.axibar_highaddr_5 {0x0000000000000000} \
    CONFIG.axibar_notranslate {false} \
    CONFIG.axibar_num {1} \
    CONFIG.axil_master_64bit_en {false} \
@@ -2495,7 +2490,6 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.bridge_burst {FALSE} \
    CONFIG.bridge_register_access {false} \
    CONFIG.bridge_registers_offset_enable {false} \
-   CONFIG.broadcom_sbr_wa {false} \
    CONFIG.c2h_stream_cpl_col_bit_pos0 {1} \
    CONFIG.c2h_stream_cpl_col_bit_pos1 {0} \
    CONFIG.c2h_stream_cpl_col_bit_pos2 {0} \
@@ -2629,9 +2623,9 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf0_bar0_enabled_qdma {true} \
    CONFIG.pf0_bar0_index {0} \
    CONFIG.pf0_bar0_prefetchable_qdma {false} \
-   CONFIG.pf0_bar0_scale_qdma {Kilobytes} \
-   CONFIG.pf0_bar0_size_qdma {256} \
-   CONFIG.pf0_bar0_type_qdma {DMA} \
+   CONFIG.pf0_bar0_scale_qdma {Megabytes} \
+   CONFIG.pf0_bar0_size_qdma {64} \
+   CONFIG.pf0_bar0_type_qdma {AXI_Bridge_Master} \
    CONFIG.pf0_bar1_64bit_qdma {false} \
    CONFIG.pf0_bar1_enabled_qdma {false} \
    CONFIG.pf0_bar1_index {7} \
@@ -2644,7 +2638,7 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf0_bar2_index {7} \
    CONFIG.pf0_bar2_prefetchable_qdma {false} \
    CONFIG.pf0_bar2_scale_qdma {Megabytes} \
-   CONFIG.pf0_bar2_size_qdma {128} \
+   CONFIG.pf0_bar2_size_qdma {512} \
    CONFIG.pf0_bar2_type_qdma {AXI_Bridge_Master} \
    CONFIG.pf0_bar3_64bit_qdma {false} \
    CONFIG.pf0_bar3_enabled_qdma {false} \
@@ -2658,7 +2652,7 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf0_bar4_index {7} \
    CONFIG.pf0_bar4_prefetchable_qdma {false} \
    CONFIG.pf0_bar4_scale_qdma {Megabytes} \
-   CONFIG.pf0_bar4_size_qdma {128} \
+   CONFIG.pf0_bar4_size_qdma {1} \
    CONFIG.pf0_bar4_type_qdma {AXI_Bridge_Master} \
    CONFIG.pf0_bar5_enabled_qdma {false} \
    CONFIG.pf0_bar5_index {7} \
@@ -2688,9 +2682,9 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf0_msix_enabled {true} \
    CONFIG.pf0_msix_enabled_qdma {true} \
    CONFIG.pf0_msix_impl_locn {External} \
-   CONFIG.pf0_pciebar2axibar_0 {0x0000000000000000} \
+   CONFIG.pf0_pciebar2axibar_0 {0x0000000800000000} \
    CONFIG.pf0_pciebar2axibar_1 {0x0000000000000000} \
-   CONFIG.pf0_pciebar2axibar_2 {0x0000000000400000} \
+   CONFIG.pf0_pciebar2axibar_2 {0x0000020000000000} \
    CONFIG.pf0_pciebar2axibar_3 {0x0000000000000000} \
    CONFIG.pf0_pciebar2axibar_4 {0x0000020100000000} \
    CONFIG.pf0_pciebar2axibar_5 {0x0000000000000000} \
@@ -2756,9 +2750,9 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf1_bar0_enabled_qdma {true} \
    CONFIG.pf1_bar0_index {0} \
    CONFIG.pf1_bar0_prefetchable_qdma {false} \
-   CONFIG.pf1_bar0_scale_qdma {Kilobytes} \
-   CONFIG.pf1_bar0_size_qdma {256} \
-   CONFIG.pf1_bar0_type_qdma {DMA} \
+   CONFIG.pf1_bar0_scale_qdma {Megabytes} \
+   CONFIG.pf1_bar0_size_qdma {64} \
+   CONFIG.pf1_bar0_type_qdma {AXI_Bridge_Master} \
    CONFIG.pf1_bar1_64bit_qdma {false} \
    CONFIG.pf1_bar1_enabled_qdma {false} \
    CONFIG.pf1_bar1_index {7} \
@@ -2771,7 +2765,7 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf1_bar2_index {7} \
    CONFIG.pf1_bar2_prefetchable_qdma {false} \
    CONFIG.pf1_bar2_scale_qdma {Megabytes} \
-   CONFIG.pf1_bar2_size_qdma {128} \
+   CONFIG.pf1_bar2_size_qdma {512} \
    CONFIG.pf1_bar2_type_qdma {AXI_Bridge_Master} \
    CONFIG.pf1_bar3_64bit_qdma {false} \
    CONFIG.pf1_bar3_enabled_qdma {false} \
@@ -2785,7 +2779,7 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf1_bar4_index {7} \
    CONFIG.pf1_bar4_prefetchable_qdma {false} \
    CONFIG.pf1_bar4_scale_qdma {Megabytes} \
-   CONFIG.pf1_bar4_size_qdma {128} \
+   CONFIG.pf1_bar4_size_qdma {1} \
    CONFIG.pf1_bar4_type_qdma {AXI_Bridge_Master} \
    CONFIG.pf1_bar5_enabled_qdma {false} \
    CONFIG.pf1_bar5_index {7} \
@@ -2798,7 +2792,7 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf1_class_code_interface_qdma {00} \
    CONFIG.pf1_class_code_qdma {058000} \
    CONFIG.pf1_class_code_sub_qdma {80} \
-   CONFIG.pf1_device_id {B134} \
+   CONFIG.pf1_device_id {913F} \
    CONFIG.pf1_expansion_rom_enabled_qdma {false} \
    CONFIG.pf1_expansion_rom_scale_qdma {Kilobytes} \
    CONFIG.pf1_expansion_rom_size_qdma {4} \
@@ -2877,9 +2871,9 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf2_bar0_enabled_qdma {true} \
    CONFIG.pf2_bar0_index {0} \
    CONFIG.pf2_bar0_prefetchable_qdma {false} \
-   CONFIG.pf2_bar0_scale_qdma {Kilobytes} \
-   CONFIG.pf2_bar0_size_qdma {256} \
-   CONFIG.pf2_bar0_type_qdma {DMA} \
+   CONFIG.pf2_bar0_scale_qdma {Megabytes} \
+   CONFIG.pf2_bar0_size_qdma {64} \
+   CONFIG.pf2_bar0_type_qdma {AXI_Bridge_Master} \
    CONFIG.pf2_bar1_64bit_qdma {false} \
    CONFIG.pf2_bar1_enabled_qdma {false} \
    CONFIG.pf2_bar1_index {7} \
@@ -2892,7 +2886,7 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf2_bar2_index {7} \
    CONFIG.pf2_bar2_prefetchable_qdma {false} \
    CONFIG.pf2_bar2_scale_qdma {Megabytes} \
-   CONFIG.pf2_bar2_size_qdma {128} \
+   CONFIG.pf2_bar2_size_qdma {512} \
    CONFIG.pf2_bar2_type_qdma {AXI_Bridge_Master} \
    CONFIG.pf2_bar3_64bit_qdma {false} \
    CONFIG.pf2_bar3_enabled_qdma {false} \
@@ -2906,7 +2900,7 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf2_bar4_index {7} \
    CONFIG.pf2_bar4_prefetchable_qdma {false} \
    CONFIG.pf2_bar4_scale_qdma {Megabytes} \
-   CONFIG.pf2_bar4_size_qdma {128} \
+   CONFIG.pf2_bar4_size_qdma {1} \
    CONFIG.pf2_bar4_type_qdma {AXI_Bridge_Master} \
    CONFIG.pf2_bar5_enabled_qdma {false} \
    CONFIG.pf2_bar5_index {7} \
@@ -2919,7 +2913,7 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf2_class_code_interface_qdma {00} \
    CONFIG.pf2_class_code_qdma {058000} \
    CONFIG.pf2_class_code_sub_qdma {80} \
-   CONFIG.pf2_device_id {923F} \
+   CONFIG.pf2_device_id {B234} \
    CONFIG.pf2_expansion_rom_enabled_qdma {false} \
    CONFIG.pf2_expansion_rom_scale_qdma {Kilobytes} \
    CONFIG.pf2_expansion_rom_size_qdma {4} \
@@ -2992,9 +2986,9 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf3_bar0_enabled_qdma {true} \
    CONFIG.pf3_bar0_index {0} \
    CONFIG.pf3_bar0_prefetchable_qdma {false} \
-   CONFIG.pf3_bar0_scale_qdma {Kilobytes} \
-   CONFIG.pf3_bar0_size_qdma {256} \
-   CONFIG.pf3_bar0_type_qdma {DMA} \
+   CONFIG.pf3_bar0_scale_qdma {Megabytes} \
+   CONFIG.pf3_bar0_size_qdma {64} \
+   CONFIG.pf3_bar0_type_qdma {AXI_Bridge_Master} \
    CONFIG.pf3_bar1_64bit_qdma {false} \
    CONFIG.pf3_bar1_enabled_qdma {false} \
    CONFIG.pf3_bar1_index {7} \
@@ -3007,7 +3001,7 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf3_bar2_index {7} \
    CONFIG.pf3_bar2_prefetchable_qdma {false} \
    CONFIG.pf3_bar2_scale_qdma {Megabytes} \
-   CONFIG.pf3_bar2_size_qdma {128} \
+   CONFIG.pf3_bar2_size_qdma {512} \
    CONFIG.pf3_bar2_type_qdma {AXI_Bridge_Master} \
    CONFIG.pf3_bar3_64bit_qdma {false} \
    CONFIG.pf3_bar3_enabled_qdma {false} \
@@ -3021,7 +3015,7 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.pf3_bar4_index {7} \
    CONFIG.pf3_bar4_prefetchable_qdma {false} \
    CONFIG.pf3_bar4_scale_qdma {Megabytes} \
-   CONFIG.pf3_bar4_size_qdma {128} \
+   CONFIG.pf3_bar4_size_qdma {1} \
    CONFIG.pf3_bar4_type_qdma {AXI_Bridge_Master} \
    CONFIG.pf3_bar5_enabled_qdma {false} \
    CONFIG.pf3_bar5_index {7} \
@@ -3128,7 +3122,7 @@ unipolar}} {NAME VAUX_CH9} {SUPPLY_NUM 0}}\
    CONFIG.timeout_mult {3} \
    CONFIG.tl_credits_cd {15} \
    CONFIG.tl_credits_ch {15} \
-   CONFIG.tl_pf_enable_reg {2} \
+   CONFIG.tl_pf_enable_reg {1} \
    CONFIG.tl_tx_mux_strict_priority {false} \
    CONFIG.type1_membase_memlimit_enable {Disabled} \
    CONFIG.type1_prefetchable_membase_memlimit {Disabled} \
@@ -3266,49 +3260,50 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets smartconnect_1_M00_AXI] [get_bd_
 
   # Create address segments
   assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces axi_cdma_0/Data] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
-  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces axi_cdma_0/Data_SG] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
   assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces axi_cdma_0/Data] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
-  assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces axi_cdma_0/Data_SG] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
   assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_cdma_0/Data] [get_bd_addr_segs axi_noc_0/S03_AXI/C0_DDR_LOW0x4] -force
+  assign_bd_address -offset 0x000800000000 -range 0x000780000000 -target_address_space [get_bd_addr_spaces axi_cdma_0/Data] [get_bd_addr_segs axi_noc_0/S03_AXI/C0_DDR_LOW1x4] -force
+  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces axi_cdma_0/Data_SG] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
+  assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces axi_cdma_0/Data_SG] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
   assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_cdma_0/Data_SG] [get_bd_addr_segs axi_noc_0/S04_AXI/C0_DDR_LOW0x4] -force
-  assign_bd_address -offset 0x000800000000 -range 0x000380000000 -target_address_space [get_bd_addr_spaces axi_cdma_0/Data] [get_bd_addr_segs axi_noc_0/S03_AXI/C0_DDR_LOW1x4] -force
-  assign_bd_address -offset 0x000800000000 -range 0x000380000000 -target_address_space [get_bd_addr_spaces axi_cdma_0/Data_SG] [get_bd_addr_segs axi_noc_0/S04_AXI/C0_DDR_LOW1x4] -force
+  assign_bd_address -offset 0x000800000000 -range 0x000780000000 -target_address_space [get_bd_addr_spaces axi_cdma_0/Data_SG] [get_bd_addr_segs axi_noc_0/S04_AXI/C0_DDR_LOW1x4] -force
   assign_bd_address -offset 0x00000000 -range 0x00040000 -target_address_space [get_bd_addr_spaces axi_traffic_gen_0_read/Data] [get_bd_addr_segs qdma_host_mem/S_AXI_BRIDGE/BAR0] -force
   assign_bd_address -offset 0x00000000 -range 0x00040000 -target_address_space [get_bd_addr_spaces axi_traffic_gen_1_write/Data] [get_bd_addr_segs qdma_host_mem/S_AXI_BRIDGE/BAR0] -force
-  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_0] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
-  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces cips_0/PMC_NOC_AXI_0] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
-  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_1] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
-  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_AXI_NOC_1] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
-  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_2] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
   assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_AXI_NOC_0] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
-  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_3] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
-  assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_0] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
-  assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces cips_0/PMC_NOC_AXI_0] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
-  assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_1] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
-  assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces cips_0/FPD_AXI_NOC_1] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
-  assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_2] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
   assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces cips_0/FPD_AXI_NOC_0] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
+  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_AXI_NOC_0] [get_bd_addr_segs axi_noc_0/S00_AXI/C0_DDR_LOW0x4] -force
+  assign_bd_address -offset 0x000800000000 -range 0x000780000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_AXI_NOC_0] [get_bd_addr_segs axi_noc_0/S00_AXI/C0_DDR_LOW1x4] -force
+  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_AXI_NOC_1] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
+  assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces cips_0/FPD_AXI_NOC_1] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
+  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_AXI_NOC_1] [get_bd_addr_segs axi_noc_0/S01_AXI/C0_DDR_LOW0x4] -force
+  assign_bd_address -offset 0x000800000000 -range 0x000780000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_AXI_NOC_1] [get_bd_addr_segs axi_noc_0/S01_AXI/C0_DDR_LOW1x4] -force
+  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_0] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
+  assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_0] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
+  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_0] [get_bd_addr_segs axi_noc_0/S05_AXI/C0_DDR_LOW0x4] -force
+  assign_bd_address -offset 0x000800000000 -range 0x000780000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_0] [get_bd_addr_segs axi_noc_0/S05_AXI/C0_DDR_LOW1x4] -force
+  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_1] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
+  assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_1] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
+  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_1] [get_bd_addr_segs axi_noc_0/S06_AXI/C0_DDR_LOW0x4] -force
+  assign_bd_address -offset 0x000800000000 -range 0x000780000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_1] [get_bd_addr_segs axi_noc_0/S06_AXI/C0_DDR_LOW1x4] -force
+  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_2] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
+  assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_2] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
+  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_2] [get_bd_addr_segs axi_noc_0/S07_AXI/C0_DDR_LOW0x4] -force
+  assign_bd_address -offset 0x000800000000 -range 0x000780000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_2] [get_bd_addr_segs axi_noc_0/S07_AXI/C0_DDR_LOW1x4] -force
+  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_3] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
   assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_3] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
+  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_3] [get_bd_addr_segs axi_noc_0/S08_AXI/C0_DDR_LOW0x4] -force
+  assign_bd_address -offset 0x000800000000 -range 0x000780000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_3] [get_bd_addr_segs axi_noc_0/S08_AXI/C0_DDR_LOW1x4] -force
   assign_bd_address -offset 0xA4000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces cips_0/M_AXI_FPD] [get_bd_addr_segs axi_cdma_0/S_AXI_LITE/Reg] -force
   assign_bd_address -offset 0x80000000 -range 0x00200000 -target_address_space [get_bd_addr_spaces cips_0/M_AXI_LPD] [get_bd_addr_segs axi_dbg_hub_0/S_AXI_DBG_HUB/Mem0] -force
-  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_3] [get_bd_addr_segs axi_noc_0/S08_AXI/C0_DDR_LOW0x4] -force
-  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_2] [get_bd_addr_segs axi_noc_0/S07_AXI/C0_DDR_LOW0x4] -force
-  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_AXI_NOC_0] [get_bd_addr_segs axi_noc_0/S00_AXI/C0_DDR_LOW0x4] -force
-  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_1] [get_bd_addr_segs axi_noc_0/S06_AXI/C0_DDR_LOW0x4] -force
-  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_AXI_NOC_1] [get_bd_addr_segs axi_noc_0/S01_AXI/C0_DDR_LOW0x4] -force
-  assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_0] [get_bd_addr_segs axi_noc_0/S05_AXI/C0_DDR_LOW0x4] -force
+  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces cips_0/PMC_NOC_AXI_0] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
+  assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces cips_0/PMC_NOC_AXI_0] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
   assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces cips_0/PMC_NOC_AXI_0] [get_bd_addr_segs axi_noc_0/S02_AXI/C0_DDR_LOW0x4] -force
-  assign_bd_address -offset 0x000800000000 -range 0x000380000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_3] [get_bd_addr_segs axi_noc_0/S08_AXI/C0_DDR_LOW1x4] -force
-  assign_bd_address -offset 0x000800000000 -range 0x000380000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_2] [get_bd_addr_segs axi_noc_0/S07_AXI/C0_DDR_LOW1x4] -force
-  assign_bd_address -offset 0x000800000000 -range 0x000380000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_AXI_NOC_0] [get_bd_addr_segs axi_noc_0/S00_AXI/C0_DDR_LOW1x4] -force
-  assign_bd_address -offset 0x000800000000 -range 0x000380000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_1] [get_bd_addr_segs axi_noc_0/S06_AXI/C0_DDR_LOW1x4] -force
-  assign_bd_address -offset 0x000800000000 -range 0x000380000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_AXI_NOC_1] [get_bd_addr_segs axi_noc_0/S01_AXI/C0_DDR_LOW1x4] -force
-  assign_bd_address -offset 0x000800000000 -range 0x000380000000 -target_address_space [get_bd_addr_spaces cips_0/FPD_CCI_NOC_0] [get_bd_addr_segs axi_noc_0/S05_AXI/C0_DDR_LOW1x4] -force
-  assign_bd_address -offset 0x000800000000 -range 0x000380000000 -target_address_space [get_bd_addr_spaces cips_0/PMC_NOC_AXI_0] [get_bd_addr_segs axi_noc_0/S02_AXI/C0_DDR_LOW1x4] -force
-  assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces qdma_host_mem/M_AXI_BRIDGE] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
+  assign_bd_address -offset 0x000800000000 -range 0x000780000000 -target_address_space [get_bd_addr_spaces cips_0/PMC_NOC_AXI_0] [get_bd_addr_segs axi_noc_0/S02_AXI/C0_DDR_LOW1x4] -force
   assign_bd_address -offset 0x00000000 -range 0x00008000 -target_address_space [get_bd_addr_spaces qdma_host_mem/M_AXI] [get_bd_addr_segs axi_bram_ctrl_1/S_AXI/Mem0] -force
+  assign_bd_address -offset 0x020000000000 -range 0x000100000000 -target_address_space [get_bd_addr_spaces qdma_host_mem/M_AXI_BRIDGE] [get_bd_addr_segs ai_engine_0/S00_AXI/AIE_ARRAY_0] -force
+  assign_bd_address -offset 0x020100000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces qdma_host_mem/M_AXI_BRIDGE] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
   assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces qdma_host_mem/M_AXI_BRIDGE] [get_bd_addr_segs axi_noc_0/S09_AXI/C0_DDR_LOW0x4] -force
-  assign_bd_address -offset 0x000800000000 -range 0x000380000000 -target_address_space [get_bd_addr_spaces qdma_host_mem/M_AXI_BRIDGE] [get_bd_addr_segs axi_noc_0/S09_AXI/C0_DDR_LOW1x4] -force
+  assign_bd_address -offset 0x000800000000 -range 0x000780000000 -target_address_space [get_bd_addr_spaces qdma_host_mem/M_AXI_BRIDGE] [get_bd_addr_segs axi_noc_0/S09_AXI/C0_DDR_LOW1x4] -force
 
 
   # Restore current instance

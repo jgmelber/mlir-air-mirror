@@ -17,7 +17,7 @@ xsa_clean:
 	$(MAKE) -C vivado clean PLATFORM=$(PLATFORM)
 	$(MAKE) -C vivado ultraclean PLATFORM=$(PLATFORM)
 
-platform:
+platform: vivado/xilinx_vck5000_air.xsa
 	$(MAKE) -C aie_platform all
 
 platform_clean:
