@@ -688,30 +688,7 @@ int main(int argc, char **argv) {
     airbin_name = "addone.airbin";
   }
 
-  uint8_t start_col = col;
-  uint8_t num_cols = 1;
-  uint8_t start_row = 1;
-  uint8_t num_rows = row;
-
-  int fd = open("/dev/mem", O_RDWR | O_SYNC);
-  if (fd == -1) {
-    std::cout << "failed to open /dev/mem" << std::endl;
-    return -1;
-  }
-
-  XAieLib_MemInst *mem = XAieLib_MemAllocate(2 * 65536, XAIELIB_MEM_ATTR_CACHE);
-  volatile uint32_t *bram_ptr = (volatile uint32_t *)XAieLib_MemGetVaddr(mem);
-  uint32_t *paddr = (uint32_t *)XAieLib_MemGetPaddr(mem);
-  volatile uint32_t *bd_ptr = (volatile uint32_t *)mmap(
-      NULL, 0x8000, PROT_READ | PROT_WRITE, MAP_SHARED, fd, BD_ADDR);
-  uint64_t bd_paddr = uint64_t(BD_ADDR);
-
-  std::ifstream infile{airbin_name};
-
   std::cout << "\nConfiguring herd in col " << col << "..." << std::endl;
-
-  // Copy airbin data to DDR
-  readairbin(infile, col);
 
   aie_libxaie_ctx_t *xaie = mlir_aie_init_libxaie();
   mlir_aie_init_device(xaie);
@@ -742,30 +719,10 @@ int main(int argc, char **argv) {
 
   auto *q = queues[0];
 
-  XAieLib_MemSyncForCPU(mem);
-  uint64_t last_td =
-      airbin2mem(infile, bd_ptr, (uint32_t *)bd_paddr, bram_ptr, paddr, col);
-  XAieLib_MemSyncForDev(mem);
-  // Send configuration packet to MicroBlaze
-  uint64_t wr_idx = queue_add_write_index(q, 1);
-  uint64_t packet_id = wr_idx % q->size;
-  dispatch_packet_t *pkt =
-      reinterpret_cast<dispatch_packet_t *>(q->base_address_vaddr) + packet_id;
-  air_packet_cdma_memcpy(pkt, last_td, uint64_t(bd_paddr), 0xffffffff);
-  pkt->type = 0x31;
-  pkt->arg[3] = 0;
-  pkt->arg[3] |= ((uint64_t)num_cols) << 24;
-  pkt->arg[3] |= ((uint64_t)start_col) << 16;
-  pkt->arg[3] |= ((uint64_t)num_rows) << 8;
-  pkt->arg[3] |= ((uint64_t)start_row);
-
-  struct timespec ts_start;
-  struct timespec ts_end;
-  clock_gettime(CLOCK_BOOTTIME, &ts_start);
-  air_queue_dispatch_and_wait(q, wr_idx, pkt);
-  clock_gettime(CLOCK_BOOTTIME, &ts_end);
-
-  printf("config time: %0.8f sec\n", time_spec_diff(ts_start, ts_end));
+  if(air_load_airbin(q, airbin_name.cstr(), col) != 0){
+	  std::cout << "Error loading airbin" << std::endl;
+	  return 1;
+  }
 
   for (auto i = 1u; i <= 2u; ++i) {
     XAieTile_CoreControl(&(xaie->TileInst[7][i]), XAIE_ENABLE, XAIE_DISABLE);
