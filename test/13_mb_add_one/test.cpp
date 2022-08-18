@@ -16,35 +16,13 @@
 #include "hsa_defs.h"
 #include "aie_inc.cpp"
 
-#define BAR_PF0_DEV_FILE_DDR    "/sys/bus/pci/devices/0000:21:00.0/resource0"
-#define BAR_PF0_DEV_FILE_AIE    "/sys/bus/pci/devices/0000:21:00.0/resource2"
-#define BAR_PF0_DEV_FILE_BRAM   "/sys/bus/pci/devices/0000:21:00.0/resource4" 
-
 int
 main(int argc, char *argv[])
 {
   uint64_t row = 0;
   uint64_t col = 7;
 
-  // Opening BAR2
-  int fda;
-  if((fda = open(BAR_PF0_DEV_FILE_AIE, O_RDWR | O_SYNC)) == -1) {
-      printf("[ERROR] Failed to open device file\n");
-      return 1;
-  }
-  printf("device file opened\n");
-
-  // Map the memory region into userspace
-  volatile void *map_aie_base = mmap(NULL,    // virtual address
-                      0x20000000,             // length
-                      PROT_READ | PROT_WRITE, // prot
-                      MAP_SHARED,             // flags
-                      fda,                    // device fd
-                      0);                     // offset
-  if (!map_aie_base) return 1;
-  printf("AIE registers mapped into userspace at %p\n",map_aie_base);
-
-  aie_libxaie_ctx_t *xaie = mlir_aie_init_libxaie(map_aie_base);
+  aie_libxaie_ctx_t *xaie = mlir_aie_init_libxaie();
   mlir_aie_init_device(xaie);
 
   mlir_aie_configure_cores(xaie);
@@ -55,16 +33,17 @@ main(int argc, char *argv[])
 
   volatile uint32_t *bram_ptr;
 
-  #define BRAM_ADDR 0x800000
+  #define BRAM_ADDR 0x800000000
   #define DMA_COUNT 16
 
-  int fd = open(BAR_PF0_DEV_FILE_DDR, O_RDWR | O_SYNC);
+  int fd = open("/sys/bus/pci/devices/0000:21:00.0/resource0",
+               O_RDWR | O_SYNC);
   if (fd != -1) {
     bram_ptr = (volatile uint32_t *)mmap(NULL, 0x2000000, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
     for (int i=0; i<DMA_COUNT; i++) {
       bram_ptr[i] = i+1;
       bram_ptr[DMA_COUNT+i] = 0xdeface;
-      //printf("bbuf %p %u\n", &bram_ptr[i], bram_ptr[i]);
+      printf("bbuf %p %llx\n", &bram_ptr[i], bram_ptr[i]);
     }
   }
 
@@ -77,35 +56,15 @@ main(int argc, char *argv[])
 
   // create the queue
   queue_t *q = nullptr;
-  auto ret = air5000_queue_create(MB_QUEUE_SIZE, HSA_QUEUE_TYPE_SINGLE, &q, 
-                                  0, const_cast<char *>(BAR_PF0_DEV_FILE_BRAM));
+  auto ret = air_queue_create(MB_QUEUE_SIZE, HSA_QUEUE_TYPE_SINGLE, &q, AIR_VCK190_SHMEM_BASE);
   assert(ret == 0 && "failed to create queue!");
-
-
-  mlir_aie_print_tile_status(xaie,col,2);
-  mlir_aie_print_dma_status(xaie,col,2);
-
-  //
-  // Set up a 1x3 herd starting 7,0
-  //
-  uint64_t wr_idx = queue_add_write_index(q, 1);
-  uint64_t packet_id = wr_idx % q->size;
-  //dispatch_packet_t *herd_pkt = (dispatch_packet_t*)(q->base_address_vaddr) + packet_id;
-  //air_packet_herd_init(herd_pkt, 0, col, 1, row, 3);
-  //air_queue_dispatch_and_wait(q, wr_idx, herd_pkt);
-
-  //wr_idx = queue_add_write_index(q, 1);
-  //packet_id = wr_idx % q->size;
-  //dispatch_packet_t *shim_pkt = (dispatch_packet_t*)(q->base_address_vaddr) + packet_id;
-  //air_packet_device_init(shim_pkt,XAIE_NUM_COLS);
-  //air_queue_dispatch_and_wait(q, wr_idx, shim_pkt);
 
   //
   // send the data
   //
 
-  //wr_idx = queue_add_write_index(q, 1);
-  //packet_id = wr_idx % q->size;
+  uint64_t wr_idx = queue_add_write_index(q, 1);
+  uint64_t packet_id = wr_idx % q->size;
   dispatch_packet_t *pkt = (dispatch_packet_t*)(q->base_address_vaddr) + packet_id;
   air_packet_nd_memcpy(pkt, 0, col, 1, 0, 4, 2, BRAM_ADDR, DMA_COUNT*sizeof(float), 1, 0, 1, 0, 1, 0);
 
@@ -118,9 +77,6 @@ main(int argc, char *argv[])
   dispatch_packet_t *pkt2 = (dispatch_packet_t*)(q->base_address_vaddr) + packet_id;
   air_packet_nd_memcpy(pkt2, 0, col, 0, 0, 4, 2, BRAM_ADDR+(DMA_COUNT*sizeof(float)), DMA_COUNT*sizeof(float), 1, 0, 1, 0, 1, 0);
   air_queue_dispatch_and_wait(q, wr_idx, pkt2);
-
-  mlir_aie_print_tile_status(xaie,col,2);
-  mlir_aie_print_dma_status(xaie,col,2);
 
   int errors = 0;
 

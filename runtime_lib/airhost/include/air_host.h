@@ -7,6 +7,7 @@
 #include "test_library.h"
 
 #include <stdlib.h>
+#include <string>
 
 extern "C" {
 
@@ -16,7 +17,7 @@ extern "C" {
 
 // library operations
 
-aie_libxaie_ctx_t *air_init_libxaie1(volatile void* base_va);
+aie_libxaie_ctx_t *air_init_libxaie1();
 void air_deinit_libxaie1(aie_libxaie_ctx_t*);
 
 // runtime operations
@@ -29,7 +30,6 @@ hsa_status_t air_get_agent_info(queue_t *queue, air_agent_info_t attribute, void
 //
 
 hsa_status_t air_queue_create(uint32_t size, uint32_t type, queue_t **queue, uint64_t paddr);
-hsa_status_t air5000_queue_create(uint32_t size, uint32_t type, queue_t **queue, uint64_t paddr, char bar_dev_file[100]);
 
 hsa_status_t air_queue_dispatch(queue_t *queue, uint64_t doorbell, dispatch_packet_t *pkt);
 hsa_status_t air_queue_wait(queue_t *queue, dispatch_packet_t *pkt);
@@ -165,5 +165,9 @@ uint64_t air_herd_load(const char *name);
 //void air_mem_dealloc(void *vaddr);
 
 }
+
+std::string air_get_ddr_bar();
+std::string air_get_aie_bar();
+std::string air_get_bram_bar();
 
 #endif // AIR_HOST_H
