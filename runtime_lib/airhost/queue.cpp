@@ -255,7 +255,8 @@ hsa_status_t air_packet_l2_dma(dispatch_packet_t *pkt, uint64_t stream, l2_dma_c
 }
 
 hsa_status_t air_packet_cdma_configure(dispatch_packet_t *pkt, uint64_t dest,
-                                    uint64_t source, uint32_t length) {
+                                    uint64_t source, uint32_t length,
+                                    struct airbin_size * airbin_data) {
   initialize_packet(pkt);
 
   pkt->arg[0]  = dest;   // Destination (BD for SG mode)
@@ -264,6 +265,14 @@ hsa_status_t air_packet_cdma_configure(dispatch_packet_t *pkt, uint64_t dest,
 
   pkt->type = AIR_PKT_TYPE_CONFIGURE;
   pkt->header = (HSA_PACKET_TYPE_AGENT_DISPATCH << HSA_PACKET_HEADER_TYPE);
+
+  pkt->arg[3] = 0;
+  if (airbin_size != nullptr) {
+    pkt->arg[3] |= ((uint64_t)airbin_size.num_cols) << 24u;
+    pkt->arg[3] |= ((uint64_t)airbin_size.start_col) << 16u;
+    pkt->arg[3] |= ((uint64_t)airbin_size.num_rows) << 8u;
+    pkt->arg[3] |= ((uint64_t)airbin_size.start_row);
+  }
 
   return HSA_STATUS_SUCCESS;
 }
@@ -384,11 +393,13 @@ hsa_status_t air_packet_barrier_or(barrier_or_packet_t *pkt,
 int air_load_airbin(queue_t *q, const char *filename, uint8_t column) {
 
   // We need to do our own memory allocation.
+  // TODO: This allocation should be abstracted.
   auto fd = open("/dev/mem", O_RDWR | O_SYNC);
   if (fd == -1) {
     std::cout << "failed to open /dev/mem" << std::endl;
     return -1;
   }
+
   XAieLib_MemInst *mem = XAieLib_MemAllocate(2 * 65536, XAIELIB_MEM_ATTR_CACHE);
   volatile uint32_t *bram_ptr = (volatile uint32_t *)XAieLib_MemGetVaddr(mem);
   auto *paddr = reinterpret_cast<uint32_t *>(XAieLib_MemGetPaddr(mem));
@@ -411,13 +422,7 @@ int air_load_airbin(queue_t *q, const char *filename, uint8_t column) {
   uint64_t packet_id = wr_idx % q->size;
   dispatch_packet_t *pkt =
       reinterpret_cast<dispatch_packet_t *>(q->base_address_vaddr) + packet_id;
-  air_packet_cdma_memcpy(pkt, last_td, uint64_t(bd_paddr), 0xffffffff);
-  pkt->type = 0x31;
-  pkt->arg[3] = 0;
-  pkt->arg[3] |= ((uint64_t)airbin_size.num_cols) << 24u;
-  pkt->arg[3] |= ((uint64_t)airbin_size.start_col) << 16u;
-  pkt->arg[3] |= ((uint64_t)airbin_size.num_rows) << 8u;
-  pkt->arg[3] |= ((uint64_t)airbin_size.start_row);
+  air_packet_cdma_configure(pkt, last_td, uint64_t(bd_paddr), 0xffffffff, &airbin_size);
 
   struct timespec ts_start;
   struct timespec ts_end;
