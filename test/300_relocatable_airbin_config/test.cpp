@@ -407,6 +407,7 @@ int main(int argc, char **argv) {
   aie_libxaie_ctx_t *xaie = mlir_aie_init_libxaie();
   mlir_aie_init_device(xaie);
 
+  // TODO: Debug if these resets are needed
   XAieTile_ShimColumnReset(&(xaie->TileInst[7][0]), XAIE_RESETENABLE);
   XAieTile_ShimColumnReset(&(xaie->TileInst[7][0]), XAIE_RESETDISABLE);
   for (auto i = 1u; i <= 2u; ++i)
@@ -438,6 +439,7 @@ int main(int argc, char **argv) {
 	  return 1;
   }
 
+  // TODO: Debug if these resets are needed
   for (auto i = 1u; i <= 2u; ++i) {
     XAieTile_CoreControl(&(xaie->TileInst[7][i]), XAIE_ENABLE, XAIE_DISABLE);
     for (int l = 0; l < 16; l++)
