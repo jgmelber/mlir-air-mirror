@@ -11,46 +11,56 @@
 #include "air_host.h"
 #include "acdc_queue.h"
 
-//hsa_status_t air_get_agents(void *data) {
-//  std::vector<air_agent_t> *pAgents = nullptr;
-//
-//  if (data == nullptr) {
-//    return HSA_STATUS_ERROR_INVALID_ARGUMENT;
-//  } else {
-//    pAgents = static_cast<std::vector<air_agent_t> *>(data);
-//  }
-//
-//  uint64_t total_controllers = 0;
-//
-//  int fd = open("/sys/bus/pci/devices/0000:21:00.0/resource4", O_RDWR | O_SYNC);
+hsa_status_t air_get_agents(void *data) {
+  std::vector<air_agent_t> *pAgents = nullptr;
+
+  if (data == nullptr) {
+    return HSA_STATUS_ERROR_INVALID_ARGUMENT;
+  } else {
+    pAgents = static_cast<std::vector<air_agent_t> *>(data);
+  }
+
+  uint64_t total_controllers = 0;
+
+//#ifdef AIR_PCIE
+  int fd = open("/sys/bus/pci/devices/0000:21:00.0/resource4", O_RDWR | O_SYNC);
+  if (fd == -1)
+    return HSA_STATUS_ERROR;
+
+  uint64_t *bram_base =
+      reinterpret_cast<uint64_t *>(mmap(NULL, 0x1000, PROT_READ | PROT_WRITE,
+                                        MAP_SHARED, fd, 0));
+//#else
+//  int fd = open("/dev/mem", O_RDWR | O_SYNC);
 //  if (fd == -1)
 //    return HSA_STATUS_ERROR;
 //
 //  uint64_t *bram_base =
 //      reinterpret_cast<uint64_t *>(mmap(NULL, 0x1000, PROT_READ | PROT_WRITE,
-//                                        MAP_SHARED, fd, 0));
-//
-//  total_controllers = bram_base[65];
-//  if (total_controllers < 1) {
-//    std::cerr << "No agents found" << std::endl;
-//    return HSA_STATUS_ERROR;
-//  }
-//
-//  uint64_t *base_addr = reinterpret_cast<uint64_t *>(AIR_VCK190_SHMEM_BASE);
-//  for (int i = 0; i < total_controllers; i++) {
-//    air_agent_t a;
-//    a.handle = reinterpret_cast<uintptr_t>(&base_addr[i]);
-//    pAgents->push_back(a);
-//  }
-//
-//  //auto res = munmap(bram_base, 0x1000);
-//  //if (res) {
-//  //  std::cerr << "Could not munmap" << std::endl;
-//  //  return HSA_STATUS_ERROR;
-//  //}
-//
-//  return HSA_STATUS_SUCCESS;
-//}
+//                                        MAP_SHARED, fd, AIR_VCK190_SHMEM_BASE));
+//#endif
+
+  total_controllers = bram_base[65];
+  if (total_controllers < 1) {
+    std::cerr << "No agents found" << std::endl;
+    return HSA_STATUS_ERROR;
+  }
+
+  uint64_t *base_addr = reinterpret_cast<uint64_t *>(AIR_VCK190_SHMEM_BASE);
+  for (int i = 0; i < total_controllers; i++) {
+    air_agent_t a;
+    a.handle = reinterpret_cast<uintptr_t>(&base_addr[i]);
+    pAgents->push_back(a);
+  }
+
+  auto res = munmap(bram_base, 0x1000);
+  if (res) {
+    std::cerr << "Could not munmap" << std::endl;
+    return HSA_STATUS_ERROR;
+  }
+
+  return HSA_STATUS_SUCCESS;
+}
 
 hsa_status_t air_get_agent_info(queue_t *queue, air_agent_info_t attribute, void* data) {
   if ((data == nullptr) || (queue == nullptr)) {
