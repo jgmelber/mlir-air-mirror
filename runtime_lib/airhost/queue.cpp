@@ -7,8 +7,9 @@
 #include <vector>
 #include <iostream>
 
-#include "air_host.h"
 #include "acdc_queue.h"
+#include "air_host.h"
+#include "airbin.h"
 
 hsa_status_t air_get_agents(void *data) {
   std::vector<air_agent_t> *pAgents = nullptr;
@@ -254,7 +255,8 @@ hsa_status_t air_packet_l2_dma(dispatch_packet_t *pkt, uint64_t stream, l2_dma_c
 }
 
 hsa_status_t air_packet_cdma_configure(dispatch_packet_t *pkt, uint64_t dest,
-                                    uint64_t source, uint32_t length) {
+                                    uint64_t source, uint32_t length,
+                                    struct airbin_size * airbin_data) {
   initialize_packet(pkt);
 
   pkt->arg[0]  = dest;   // Destination (BD for SG mode)
@@ -263,6 +265,14 @@ hsa_status_t air_packet_cdma_configure(dispatch_packet_t *pkt, uint64_t dest,
 
   pkt->type = AIR_PKT_TYPE_CONFIGURE;
   pkt->header = (HSA_PACKET_TYPE_AGENT_DISPATCH << HSA_PACKET_HEADER_TYPE);
+
+  pkt->arg[3] = 0;
+  if (airbin_size != nullptr) {
+    pkt->arg[3] |= ((uint64_t)airbin_size.num_cols) << 24u;
+    pkt->arg[3] |= ((uint64_t)airbin_size.start_col) << 16u;
+    pkt->arg[3] |= ((uint64_t)airbin_size.num_rows) << 8u;
+    pkt->arg[3] |= ((uint64_t)airbin_size.start_row);
+  }
 
   return HSA_STATUS_SUCCESS;
 }
@@ -380,3 +390,50 @@ hsa_status_t air_packet_barrier_or(barrier_or_packet_t *pkt,
   return HSA_STATUS_SUCCESS;
 }
 
+int air_load_airbin(queue_t *q, const char *filename, uint8_t column) {
+
+  // We need to do our own memory allocation.
+  // TODO: This allocation should be abstracted.
+  auto fd = open("/dev/mem", O_RDWR | O_SYNC);
+  if (fd == -1) {
+    std::cout << "failed to open /dev/mem" << std::endl;
+    return -1;
+  }
+
+  XAieLib_MemInst *mem = XAieLib_MemAllocate(2 * 65536, XAIELIB_MEM_ATTR_CACHE);
+  volatile uint32_t *bram_ptr = (volatile uint32_t *)XAieLib_MemGetVaddr(mem);
+  auto *paddr = reinterpret_cast<uint32_t *>(XAieLib_MemGetPaddr(mem));
+
+  static constexpr auto BD_ADDR = 0x3000 + AIR_VCK190_SHMEM_BASE;
+  volatile auto *bd_ptr = static_cast<volatile uint32_t *>(mmap(
+      NULL, 0x8000, PROT_READ | PROT_WRITE, MAP_SHARED, fd, BD_ADDR));
+  auto bd_paddr = uint64_t(BD_ADDR);
+
+  std::ifstream infile{filename};
+
+  auto airbin_size = readairbinsize(infile, column);
+
+  XAieLib_MemSyncForCPU(mem);
+  uint64_t last_td =
+      airbin2mem(infile, bd_ptr, (uint32_t *)bd_paddr, bram_ptr, paddr, airbin_size.start_col);
+  XAieLib_MemSyncForDev(mem);
+  // Send configuration packet to MicroBlaze
+  uint64_t wr_idx = queue_add_write_index(q, 1);
+  uint64_t packet_id = wr_idx % q->size;
+  dispatch_packet_t *pkt =
+      reinterpret_cast<dispatch_packet_t *>(q->base_address_vaddr) + packet_id;
+  air_packet_cdma_configure(pkt, last_td, uint64_t(bd_paddr), 0xffffffff, &airbin_size);
+
+  struct timespec ts_start;
+  struct timespec ts_end;
+  clock_gettime(CLOCK_BOOTTIME, &ts_start);
+  air_queue_dispatch_and_wait(q, wr_idx, pkt);
+  clock_gettime(CLOCK_BOOTTIME, &ts_end);
+
+  auto time_spec_diff = [](struct timespec &start, struct timespec &end) {
+	  return (end.tv_sec - start.tv_sec) + 1e-9 * (end.tv_nsec - start.tv_nsec);
+  };
+
+  printf("config time: %0.8f sec\n", time_spec_diff(ts_start, ts_end));
+  return 0;
+}

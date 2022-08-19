@@ -6,6 +6,7 @@ include_directories(
 
 if(LIBXAIE_FOUND)
 add_library(airhost STATIC
+    airbin.cpp
     memory.cpp
     queue.cpp
     host.cpp
@@ -13,6 +14,7 @@ add_library(airhost STATIC
 set_property(TARGET airhost PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 add_library(airhost_shared SHARED
+    airbin.cpp
     memory.cpp
     queue.cpp
     host.cpp
@@ -47,7 +49,7 @@ foreach(file ${INSTALLS})
 endforeach()
 
 # Install files
-set(INSTALLS memory.cpp queue.cpp host.cpp)
+set(INSTALLS airbin.cpp memory.cpp queue.cpp host.cpp)
 install(FILES ${INSTALLS} DESTINATION ${CMAKE_INSTALL_PREFIX}/runtime_lib/airhost)
 
 else()
