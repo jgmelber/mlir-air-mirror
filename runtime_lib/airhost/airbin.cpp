@@ -1,6 +1,6 @@
 
-#include "include/airbin.h"
-#include "include/acdc_queue.h"
+#include "airbin.h"
+#include "air_queue.h"
 #include <algorithm> // minmax_element, sort
 #include <cassert>
 #include <cstdint>
