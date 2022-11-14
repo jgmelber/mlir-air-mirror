@@ -250,8 +250,9 @@ air_herd_desc_t *air_herd_get_desc(air_module_handle_t handle,
 uint64_t air_partition_load(const char *name);
 
 uint64_t air_herd_load(const char *name);
-int air_load_airbin(queue_t *, const char *filename, uint8_t col);
 
+int air_load_airbin(queue_t *, const char *filename, uint8_t col,
+                    uint32_t device_id = 0);
 }
 
 std::string air_get_ddr_bar(uint32_t device_id);
