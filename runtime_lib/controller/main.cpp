@@ -1101,31 +1101,10 @@ void handle_packet_sg_cdma(dispatch_packet_t *pkt) {
     xaie::out32(xaie::getTileAddr(c,0) + 0x00036048, !!0); // 0 == ResetDisable
   }
   volatile uint32_t *cdmab = (volatile uint32_t *)(cfg_cdma_base);
-  u32 start_row = (pkt->arg[3] >> 0) & 0xff;
-  u32 num_rows = (pkt->arg[3] >> 8) & 0xff;
-  u32 start_col = (pkt->arg[3] >> 16) & 0xff;
-  u32 num_cols = (pkt->arg[3] >> 24) & 0xff;
-  for (uint c = start_col; c < start_col + num_cols; c++) {
-    for (uint r = start_row; r < start_row + num_rows; r++) {
-      // int st = xaie::in32(xaie::getTileAddr(c,r) + 0x00032004);
-      // if ((0x3&st) != 0x2) {
-      // air_printf("Resetting col %d row %d. 0x%lx ==
-      // 0x%lx\n\r",c,r,xaie::getTileAddr(c,r),_XAie_GetTileAddr(&(_xaie->DevInst),
-      // r, c));
-      xaie::out32(xaie::getTileAddr(c, r) + 0x00032000, 0x2);
-      air_printf("Done resetting col %d row %d.\n\r", c, r);
-      //}
-    }
-    air_printf("Resetting column %d.\n\r", c);
-    xaie::out32(xaie::getTileAddr(c, 0) + 0x00036048, !!1); // 1 == ResetEnable
-    xaie::out32(xaie::getTileAddr(c, 0) + 0x00036048, !!0); // 0 == ResetDisable
-    air_printf("Done resetting column %d.\n\r", c);
-  }
-  air_printf("CDMA reset.\n\r");
-  cdmab[0] |= 0x4;
-  cdmab[0] &= 0x4;
-  while (cdmab[0] & 0x4)
-    ;
+  //air_printf("CDMA reset.\n\r");
+  //cdmab[0] |= 0x4;
+  //cdmab[0] &= 0x4;
+  //while (cdmab[0] & 0x4);
   air_printf("CDMA start.\n\r");
   uint64_t daddr = (pkt->arg[0]);
   uint64_t saddr = (pkt->arg[1]);
@@ -1151,8 +1130,8 @@ void handle_packet_sg_cdma(dispatch_packet_t *pkt) {
   for (uint c = start_col; c < start_col + num_cols; c++) {
     for (uint r = start_row; r <= start_row + num_rows; r++) {
       for (int l = 0; l < 16; l++)
-        xaie::maskpoll32(xaie::getTileAddr(c, r) + 0x0001E020 + 0x80 * l, 0x1,
-                         0x1, 0);
+        xaie::maskpoll32(xaie::getTileAddr(c, r) + 0x0001E020 + 0x80 * l, 
+                         0x1, 0x1, 0);
       xaie::out32(xaie::getTileAddr(c, r) + 0x00032000, 0x1);
     }
   }
@@ -1162,39 +1141,7 @@ void handle_packet_sg_cdma(dispatch_packet_t *pkt) {
 void handle_packet_cdma(dispatch_packet_t *pkt) {
   // packet is in active phase
   packet_set_active(pkt, true);
-  u32 start_row = (pkt->arg[3] >> 0) & 0xff;
-  u32 num_rows = (pkt->arg[3] >> 8) & 0xff;
-  u32 start_col = (pkt->arg[3] >> 16) & 0xff;
-  u32 num_cols = (pkt->arg[3] >> 24) & 0xff;
-  u32 op = (pkt->arg[3] >> 32) & 0xff;
-  if (op == 2) {
-    for (uint c = start_col; c < start_col + num_cols; c++) {
-      for (uint r = start_row; r < start_row + num_rows; r++) {
-        int st = xaie::in32(xaie::getTileAddr(c, r) + 0x00032004);
-        air_printf("Status col %d row %d. 0x%x\n\r", c, r, st & 0x3);
-        if ((0x3 & st) != 0x2) {
-          // air_printf("Resetting col %d row %d. 0x%lx ==
-          // 0x%lx\n\r",c,r,xaie::getTileAddr(c,r),_XAie_GetTileAddr(&(_xaie->DevInst),
-          // r, c));
-          xaie::out32(xaie::getTileAddr(c, r) + 0x00032000, 0x2);
-          air_printf("Done resetting col %d row %d.\n\r", c, r);
-        }
-      }
-    }
-  }
-  if (op == 1) {
-    for (uint c = start_col; c < start_col + num_cols; c++) {
-      air_printf("Resetting column %d.\n\r", c);
-      xaie::out32(xaie::getTileAddr(c, 0) + 0x00036048,
-                  !!1); // 1 == ResetEnable
-      xaie::out32(xaie::getTileAddr(c, 0) + 0x00036048,
-                  !!0); // 0 == ResetDisable
-      air_printf("Done resetting column %d.\n\r", c);
-    }
-  }
   volatile uint32_t *cdmab = (volatile uint32_t *)(cfg_cdma_base);
-  uint32_t status = cdmab[1];
-  air_printf("CMDA raw %x idle %x\n\r", status, status & 2);
   uint64_t daddr = (pkt->arg[0]);
   uint64_t saddr = (pkt->arg[1]);
   uint32_t bytes = (pkt->arg[2]);
@@ -1207,16 +1154,6 @@ void handle_packet_cdma(dispatch_packet_t *pkt) {
   cdmab[10] = bytes;
   while (!(cdmab[1] & 2))
     air_printf("CMDA wait...\n\r");
-  if (op == 2) {
-    for (uint c = start_col; c < start_col + num_cols; c++) {
-      for (uint r = start_row; r <= start_row + num_rows; r++) {
-        for (int l = 0; l < 16; l++)
-          xaie::maskpoll32(xaie::getTileAddr(c, r) + 0x0001E020 + 0x80 * l, 0x1,
-                           0x1, 0);
-        xaie::out32(xaie::getTileAddr(c, r) + 0x00032000, 0x1);
-      }
-    }
-  }
 }
 
 void handle_packet_xaie_lock(dispatch_packet_t *pkt) {
