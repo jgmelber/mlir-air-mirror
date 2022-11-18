@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: MIT
 
 CC=clang
-ACDC_AIR = $(dir $(shell which aie-opt))/..
+ACDC_AIE = $(dir $(shell which aie-opt))/..
+ACDC_AIR = $(dir $(shell which air-opt))/..
 
 LDFLAGS = -fuse-ld=lld -rdynamic \
     -DLIBXAIENGINEV2 \

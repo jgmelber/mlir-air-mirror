@@ -15,9 +15,11 @@
 
 //#include <xaiengine.h>
 
-#include "air_host.h"
-#include "air_queue.h"
-#include "hsa_defs.h"
+#include "air.hpp"
+
+//#include "air_host.h"
+//#include "air_queue.h"
+//#include "hsa_defs.h"
 
 #include <sys/time.h>
 #include <ctime>
@@ -622,10 +624,29 @@ int main(int argc, char **argv) {
   //print_airbin_header(infile);
   readairbin(infile);
 
-  queue_t *q = nullptr;
-  auto ret = air_queue_create(MB_QUEUE_SIZE, HSA_QUEUE_TYPE_SINGLE, &q,
-                              AIR_VCK190_SHMEM_BASE);
-  assert(ret == 0 && "failed to create queue!");
+  std::vector<air_agent_t> agents;
+  auto get_agents_ret = air_get_agents(agents);
+  assert(get_agents_ret == HSA_STATUS_SUCCESS && "failed to get agents!");
+
+  if (agents.empty()) {
+    std::cout << "fail." << std::endl;
+    return -1;
+  }
+
+  std::cout << "Found " << agents.size() << " agents" << std::endl;
+
+  std::vector<queue_t *> queues;
+  for (auto agent : agents) {
+    // create the queue
+    queue_t *q = nullptr;
+    auto create_queue_ret =
+        air_queue_create(MB_QUEUE_SIZE, HSA_QUEUE_TYPE_SINGLE, &q, agent.handle,
+                         0 /* device_id (optional) */);
+    assert(create_queue_ret == 0 && "failed to create queue!");
+    queues.push_back(q);
+  }
+
+  queue_t *q = queues[0];
 
   //struct timespec ts_start;
   //struct timespec ts_end;
@@ -654,13 +675,14 @@ int main(int argc, char **argv) {
 
   int errors = 0; 
 
-  if (strcmp(airbin_name, "addone.airbin") == 0) {
+  if ((strcmp(airbin_name, "addone.airbin") == 0) || 
+      (strcmp(airbin_name, "add_one.airbin") == 0)) {
     errors = addone_driver(q,col,row);
   } else if (strcmp(airbin_name, "matadd.airbin") == 0) {
     errors = matadd_driver(q,col,row);
   } else errors = 1;
 
-  munmap(map_axib_base,0x2000000);
+  //munmap(map_axib_base,0x2000000);
 
   infile.close(); 
  

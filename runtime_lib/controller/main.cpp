@@ -1101,10 +1101,10 @@ void handle_packet_sg_cdma(dispatch_packet_t *pkt) {
     xaie::out32(xaie::getTileAddr(c,0) + 0x00036048, !!0); // 0 == ResetDisable
   }
   volatile uint32_t *cdmab = (volatile uint32_t *)(cfg_cdma_base);
-  //air_printf("CDMA reset.\n\r");
-  //cdmab[0] |= 0x4;
-  //cdmab[0] &= 0x4;
-  //while (cdmab[0] & 0x4);
+  air_printf("CDMA reset.\n\r");
+  cdmab[0] |= 0x4;
+  cdmab[0] &= 0x4;
+  while (cdmab[0] & 0x4);
   air_printf("CDMA start.\n\r");
   uint64_t daddr = (pkt->arg[0]);
   uint64_t saddr = (pkt->arg[1]);
