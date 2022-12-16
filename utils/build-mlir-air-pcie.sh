@@ -51,7 +51,7 @@ PYTHON_ROOT=`pip3 show pybind11 | grep Location | awk '{print $2}'`
 
 cmake .. \
 	-GNinja \
-	-DCMAKE_INSTALL_PREFIX=../install-pcie \
+	-DCMAKE_INSTALL_PREFIX=../${INSTALL_DIR} \
 	-DCMAKE_TOOLCHAIN_FILE=../cmake/modules/toolchain_x86.cmake \
 	-DLLVM_DIR=${LLVM_DIR}/build/lib/cmake/llvm \
 	-DMLIR_DIR=${LLVM_DIR}/build/lib/cmake/mlir \

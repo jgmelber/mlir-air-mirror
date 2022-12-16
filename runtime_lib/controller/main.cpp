@@ -59,7 +59,7 @@ int shim_dma_cols[NUM_SHIM_DMAS] = {2,  3,  6,  7,  10, 11, 18, 19,
 int col_dma_cols[NUM_COL_DMAS] = {7, 8, 9, 10};
 #define NUM_DMAS (NUM_SHIM_DMAS + NUM_COL_DMAS)
 
-#define CHATTY 0
+#define CHATTY 1
 
 #define air_printf(fmt, ...)                                                   \
   do {                                                                         \
@@ -69,9 +69,13 @@ int col_dma_cols[NUM_COL_DMAS] = {7, 8, 9, 10};
 
 inline uint64_t mymod(uint64_t a) {
   uint64_t result = a;
+#if ARM_CONTROLLER
+  result = result % MB_QUEUE_SIZE;
+#elif
   while (result >= MB_QUEUE_SIZE) {
     result -= MB_QUEUE_SIZE;
   }
+#endif
   return result;
 }
 
@@ -1093,6 +1097,8 @@ void handle_packet_sg_cdma(dispatch_packet_t *pkt) {
   u32 num_rows  = (pkt->arg[3] >>  8) & 0xff;
   u32 start_col = (pkt->arg[3] >> 16) & 0xff;
   u32 num_cols  = (pkt->arg[3] >> 24) & 0xff;
+  if (start_row == 0)
+    start_row++;
   for (int c=start_col; c<start_col+num_cols; c++) {
     for (int r=start_row; r<start_row+num_rows; r++) {
       xaie::out32(xaie::getTileAddr(c,r) + 0x00032000, 0x2); 
@@ -1475,6 +1481,24 @@ void handle_agent_dispatch_packet(queue_t *q, uint32_t mb_id) {
       complete_agent_dispatch_packet(pkt);
       packets_processed++;
       break;
+
+#ifdef ARM_CONTROLLER
+    case AIR_PKT_TYPE_SDMA_STATUS:
+      handle_packet_xaie_status(pkt, 1);
+      complete_agent_dispatch_packet(pkt);
+      packets_processed++;
+      break;
+    case AIR_PKT_TYPE_TDMA_STATUS:
+      handle_packet_xaie_status(pkt, 2);
+      complete_agent_dispatch_packet(pkt);
+      packets_processed++;
+      break;
+    case AIR_PKT_TYPE_CORE_STATUS:
+      handle_packet_xaie_status(pkt, 3);
+      complete_agent_dispatch_packet(pkt);
+      packets_processed++;
+      break;
+#endif
 
     case AIR_PKT_TYPE_HELLO:
       handle_packet_hello(pkt, mb_id);

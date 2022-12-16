@@ -16,4 +16,5 @@ struct airbin_size {
 };
 
 airbin_size readairbinsize(std::ifstream &infile, uint8_t column_offset);
+void readairbin(std::ifstream &infile);
 #endif

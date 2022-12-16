@@ -5,6 +5,8 @@
 #include <cassert>
 #include <cstdint>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
 #include <utility> // pair
 #include <vector>
 
@@ -48,6 +50,48 @@ struct Air64_Chdr {
   uint64_t ch_offset;
   uint64_t ch_size;
 };
+
+std::string to_air_cfg_name(uint32_t in) {
+  switch (in) {
+  case 1:
+    return ".ssmast";
+    break;
+  case 2:
+    return ".ssslve";
+    break;
+  case 3:
+    return ".sspckt";
+    break;
+  case 4:
+    return ".sdma.bd";
+    break;
+  case 5:
+    return ".shmmux";
+    break;
+  case 6:
+    return ".sdma.ctl";
+    break;
+  case 7:
+    return ".prgm.mem";
+    break;
+  case 8:
+    return ".tdma.bd";
+    break;
+  case 9:
+    return ".tdma.ctl";
+    break;
+  case 10:
+    return ".data.stk";
+    break;
+  case 11:
+    return ".data.mem";
+    break;
+  default:
+    return "";
+    break;
+  }
+  return "";
+}
 
 static Air64_Chdr read_section_header(std::ifstream &infile,
                                       uint8_t column_offset) {
@@ -112,6 +156,76 @@ airbin_size readairbinsize(std::ifstream &infile, uint8_t column_offset) {
   result.num_rows = (minmax_rows.second->second - result.start_row) + 1u;
 
   return result;
+ }
+
+ void readairbin(std::ifstream &infile) {
+  unsigned char longnum[8] = {0};
+  uint16_t f_type;
+  uint16_t arch;
+  uint16_t f_ver;
+  uint16_t num_ch;
+  uint32_t chcfg;
+  uint32_t next_chcfg_idx = 0;
+  infile.seekg(2 * sizeof(longnum));
+  infile.read(reinterpret_cast<char *>(longnum), 2);
+  f_type = std::stoi(reinterpret_cast<char *>(longnum), NULL, 16);
+  infile.read(reinterpret_cast<char *>(longnum), 2);
+  arch = std::stoi(reinterpret_cast<char *>(longnum), NULL, 16);
+  infile.read(reinterpret_cast<char *>(longnum), 2);
+  f_ver = std::stoi(reinterpret_cast<char *>(longnum), NULL, 16);
+  infile.read(reinterpret_cast<char *>(longnum), 2);
+  num_ch = std::stoi(reinterpret_cast<char *>(longnum), NULL, 16);
+  infile.read(reinterpret_cast<char *>(longnum), 8);
+  chcfg = std::stoi(reinterpret_cast<char *>(longnum), NULL, 16);
+  std::cout << "Configuration Headers:" << std::endl;
+  std::cout << std::right << std::setw(6) << std::setfill(' ') << std::dec
+            << "[Nr]" << ' ';
+  std::cout << std::left << std::hex << std::setw(12) << std::setfill(' ')
+            << "Name" << ' ';
+  std::cout << std::hex << std::setw(12) << std::setfill(' ') << "Type" << ' ';
+  std::cout << std::hex << std::setw(8) << std::setfill(' ') << "Addr" << ' ';
+  std::cout << std::hex << std::setw(6) << std::setfill(' ') << "Offset" << ' ';
+  std::cout << std::hex << std::setw(6) << std::setfill(' ') << "Size"
+            << std::endl;
+  while (next_chcfg_idx < num_ch) {
+    infile.seekg(chcfg + 1 + next_chcfg_idx * 9 * 8);
+    Air64_Chdr config_header;
+    infile >> std::hex >> config_header.ch_tile;
+    infile >> std::hex >> config_header.ch_name;
+    infile >> std::hex >> config_header.ch_type;
+    infile >> std::hex >> config_header.ch_addr;
+    infile >> std::hex >> config_header.ch_addr;
+    infile >> std::hex >> config_header.ch_offset;
+    infile >> std::hex >> config_header.ch_offset;
+    infile >> std::hex >> config_header.ch_size;
+    infile >> std::hex >> config_header.ch_size;
+    std::cout << std::right << std::dec << "  [" << std::setw(2)
+              << std::setfill(' ') << next_chcfg_idx + 1 << "]" << ' '
+              << std::left;
+    if (config_header.ch_type) {
+      std::cout << std::hex << std::setw(12) << std::setfill(' ')
+                << to_air_cfg_name(config_header.ch_name) << ' ';
+      std::cout << std::hex << std::setw(12) << std::setfill(' ') << "PROGBITS"
+                << ' ';
+      std::cout << std::right << std::hex << std::setw(8) << std::setfill('0')
+                << config_header.ch_addr << ' ';
+      std::cout << std::hex << std::setw(6) << std::setfill('0')
+                << config_header.ch_offset << ' ';
+      std::cout << std::hex << std::setw(6) << std::setfill('0')
+                << config_header.ch_size << std::endl;
+    } else {
+      std::cout << std::hex << std::setw(12) << std::setfill(' ') << "" << ' ';
+      std::cout << std::hex << std::setw(12) << std::setfill(' ') << "NULL"
+                << ' ';
+      std::cout << std::right << std::hex << std::setw(8) << std::setfill('0')
+                << config_header.ch_addr << ' ';
+      std::cout << std::hex << std::setw(6) << std::setfill('0')
+                << config_header.ch_offset << ' ';
+      std::cout << std::hex << std::setw(6) << std::setfill('0')
+                << config_header.ch_size << std::endl;
+    }
+    next_chcfg_idx++;
+  }
  }
 
 uint64_t airbin2mem(std::ifstream &infile, volatile uint32_t *tds_va,

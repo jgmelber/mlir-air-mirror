@@ -367,9 +367,6 @@ hsa_status_t air_packet_cdma_configure(dispatch_packet_t *pkt, uint64_t dest,
   pkt->arg[1] = source; // Source (BD for SG mode)
   pkt->arg[2] = length; // Num Bytes (0xFFFFFFFF for SG mode)
 
-  pkt->type = AIR_PKT_TYPE_CONFIGURE;
-  pkt->header = (HSA_PACKET_TYPE_AGENT_DISPATCH << HSA_PACKET_HEADER_TYPE);
-
   pkt->arg[3] = 0;
   if (airbin_data != nullptr) {
     pkt->arg[3] |= ((uint64_t)(airbin_data->num_cols)) << 24u;
@@ -377,6 +374,9 @@ hsa_status_t air_packet_cdma_configure(dispatch_packet_t *pkt, uint64_t dest,
     pkt->arg[3] |= ((uint64_t)(airbin_data->num_rows)) << 8u;
     pkt->arg[3] |= ((uint64_t)(airbin_data->start_row));
   }
+
+  pkt->type = AIR_PKT_TYPE_CONFIGURE;
+  pkt->header = (HSA_PACKET_TYPE_AGENT_DISPATCH << HSA_PACKET_HEADER_TYPE);
 
   return HSA_STATUS_SUCCESS;
 }
@@ -510,18 +510,19 @@ int air_load_airbin(queue_t *q, const char *filename, uint8_t column,
 
   std::ifstream infile{filename};
 
-  auto airbin_size = readairbinsize(infile, column);
+  auto size = readairbinsize(infile, column);
 
   // AIRBIN from file to memory
-  uint64_t last_td =
-      airbin2mem(infile, bd_ptr, (uint32_t *)bd_paddr, bram_ptr, paddr, airbin_size.start_col);
+  uint64_t last_td = airbin2mem(infile, bd_ptr, (uint32_t *)bd_paddr, bram_ptr,
+                                paddr, size.start_col);
 
   // Send configuration packet
   uint64_t wr_idx = queue_add_write_index(q, 1);
   uint64_t packet_id = wr_idx % q->size;
   dispatch_packet_t *pkt =
       reinterpret_cast<dispatch_packet_t *>(q->base_address_vaddr) + packet_id;
-  air_packet_cdma_configure(pkt, last_td, uint64_t(bd_paddr), 0xffffffff, &airbin_size);
+  air_packet_cdma_configure(pkt, last_td, uint64_t(bd_paddr), 0xffffffff,
+                            &size);
 
   // struct timespec ts_start;
   // struct timespec ts_end;
