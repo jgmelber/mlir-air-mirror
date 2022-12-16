@@ -1,10 +1,25 @@
+ACDC_AIE = $(dir $(shell which aie-opt))/..
+ACDC_AIR = $(dir $(shell which air-opt))/..
+
 .PHONY: all
 all: test
 
-FLAGS=-fPIC -ldl -Wall -Wextra -std=c++17
+LDFLAGS = -fuse-ld=lld -rdynamic \
+    -DLIBXAIENGINEV2 \
+    -lxaiengine \
+    -Wl,--whole-archive -lairhost -Wl,--no-whole-archive \
+    -lstdc++ \
+    -lm \
+    -Wl,--no-as-needed -ldl
+
+CFLAGS += -g -I/opt/xaiengine/include
+CFLAGS += -std=c++17 -I$(ACDC_AIR)/runtime_lib/airhost/include -I$(ACDC_AIR)/runtime_lib \
+          -DAIR_LIBXAIE_ENABLE
+LDFLAGS += -L/opt/xaiengine/lib -Wl,-R/opt/xaiengine/lib
+LDFLAGS += -L$(ACDC_AIR)/runtime_lib/airhost
 
 test.exe: test.cpp
-	clang++ test.cpp ${FLAGS} -I${ACDC}/runtime_lib/airhost/include -I/opt/xaiengine/include -I${ACDC}/runtime_lib ${ACDC}/runtime_lib/test_library.cpp -L${ACDC}/runtime_lib/airhost -L/opt/xaiengine/lib -lxaiengine -Wl,--whole-archive -lairhost -Wl,--no-whole-archive -o test.exe
+	clang++ $< ${CFLAGS} ${LDFLAGS} -o $@
 
 .PHONY: test
 test: test.exe

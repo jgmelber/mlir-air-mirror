@@ -169,47 +169,47 @@ u64 getTileAddr_BAR(u16 ColIdx, u16 RowIdx)
   return TileAddr;
 }
 
-std::string to_air_cfg_name(uint32_t in) {
-  switch (in)  {
-    case 1:
-      return ".ssmast";
-      break;
-    case 2:
-      return ".ssslve";
-      break;
-    case 3:
-      return ".sspckt";
-      break;
-    case 4:
-      return ".sdma.bd";
-      break;
-    case 5:
-      return ".shmmux";
-      break;
-    case 6:
-      return ".sdma.ctl";
-      break;
-    case 7:
-      return ".prgm.mem";
-      break;
-    case 8:
-      return ".tdma.bd";
-      break;
-    case 9:
-      return ".tdma.ctl";
-      break;
-    case 10:
-      return ".data.stk";
-      break;
-    case 11:
-      return ".data.mem";
-      break;
-    default:
-      return "";
-      break;
-  }
-  return "";
-}
+// std::string to_air_cfg_name(uint32_t in) {
+//   switch (in)  {
+//     case 1:
+//       return ".ssmast";
+//       break;
+//     case 2:
+//       return ".ssslve";
+//       break;
+//     case 3:
+//       return ".sspckt";
+//       break;
+//     case 4:
+//       return ".sdma.bd";
+//       break;
+//     case 5:
+//       return ".shmmux";
+//       break;
+//     case 6:
+//       return ".sdma.ctl";
+//       break;
+//     case 7:
+//       return ".prgm.mem";
+//       break;
+//     case 8:
+//       return ".tdma.bd";
+//       break;
+//     case 9:
+//       return ".tdma.ctl";
+//       break;
+//     case 10:
+//       return ".data.stk";
+//       break;
+//     case 11:
+//       return ".data.mem";
+//       break;
+//     default:
+//       return "";
+//       break;
+//   }
+//   return "";
+// }
 
 void elf2airbin(std::ifstream &infile, std::ofstream &myfile) {
     int start = 0; int stop = 0;
@@ -260,56 +260,62 @@ void print_airbin_header(std::ifstream &infile) {
   std::cout << num[1] << " " << num[2] << " " << num[3] << std::endl;
 }
 
-void readairbin(std::ifstream &infile) {
-  unsigned char longnum[8] = { 0 };
-  uint16_t f_type; uint16_t arch; uint16_t f_ver; uint16_t num_ch; uint32_t chcfg;
-  uint32_t next_chcfg_idx = 0; 
-  infile.seekg( 2*sizeof(longnum) );
-  infile.read(reinterpret_cast<char*>(longnum),2);
-  f_type = std::stoi(reinterpret_cast<char*>(longnum),NULL,16);
-  infile.read(reinterpret_cast<char*>(longnum),2);
-  arch = std::stoi(reinterpret_cast<char*>(longnum),NULL,16);
-  infile.read(reinterpret_cast<char*>(longnum),2);
-  f_ver = std::stoi(reinterpret_cast<char*>(longnum),NULL,16);
-  infile.read(reinterpret_cast<char*>(longnum),2);
-  num_ch = std::stoi(reinterpret_cast<char*>(longnum),NULL,16);
-  infile.read(reinterpret_cast<char*>(longnum),8);
-  chcfg = std::stoi(reinterpret_cast<char*>(longnum),NULL,16);
-  std::cout << "Configuration Headers:" << std::endl;
-  std::cout << std::right << std::setw(6) << std::setfill(' ') << std::dec << "[Nr]" << ' ';
-  std::cout << std::left << std::hex << std::setw(12) << std::setfill(' ') << "Name" << ' ';
-  std::cout << std::hex << std::setw(12) << std::setfill(' ') << "Type" << ' ';
-  std::cout << std::hex << std::setw(8) << std::setfill(' ') << "Addr" << ' ';
-  std::cout << std::hex << std::setw(6) << std::setfill(' ') << "Offset" << ' ';
-  std::cout << std::hex << std::setw(6) << std::setfill(' ') << "Size" << std::endl;
-  while (next_chcfg_idx < num_ch) {
-    infile.seekg( chcfg + 1 + next_chcfg_idx*9*8 );
-    Air64_Chdr config_header;
-    infile >> std::hex >> config_header.ch_name; 
-    infile >> std::hex >> config_header.ch_type; 
-    infile >> std::hex >> config_header.ch_addr; 
-    infile >> std::hex >> config_header.ch_addr; 
-    infile >> std::hex >> config_header.ch_offset; 
-    infile >> std::hex >> config_header.ch_offset; 
-    infile >> std::hex >> config_header.ch_size; 
-    infile >> std::hex >> config_header.ch_size;
-    std::cout << std::right << std::dec << "  [" << std::setw(2) << std::setfill(' ') << next_chcfg_idx+1 << "]" << ' ' << std::left;
-    if (config_header.ch_type) { 
-      std::cout << std::hex << std::setw(12) << std::setfill(' ') << to_air_cfg_name(config_header.ch_name) << ' ';
-      std::cout << std::hex << std::setw(12) << std::setfill(' ') << "PROGBITS" << ' ';
-      std::cout << std::right << std::hex << std::setw(8) << std::setfill('0') << config_header.ch_addr << ' ';
-      std::cout << std::hex << std::setw(6) << std::setfill('0') << config_header.ch_offset << ' ';
-      std::cout << std::hex << std::setw(6) << std::setfill('0') << config_header.ch_size << std::endl;
-    } else {
-      std::cout << std::hex << std::setw(12) << std::setfill(' ') << "" << ' ';
-      std::cout << std::hex << std::setw(12) << std::setfill(' ') << "NULL" << ' ';
-      std::cout << std::right << std::hex << std::setw(8) << std::setfill('0') << config_header.ch_addr << ' ';
-      std::cout << std::hex << std::setw(6) << std::setfill('0') << config_header.ch_offset << ' ';
-      std::cout << std::hex << std::setw(6) << std::setfill('0') << config_header.ch_size << std::endl;
-    }
-    next_chcfg_idx++;
-  }
-}
+// void readairbin(std::ifstream &infile) {
+//   unsigned char longnum[8] = { 0 };
+//   uint16_t f_type; uint16_t arch; uint16_t f_ver; uint16_t num_ch; uint32_t
+//   chcfg; uint32_t next_chcfg_idx = 0; infile.seekg( 2*sizeof(longnum) );
+//   infile.read(reinterpret_cast<char*>(longnum),2);
+//   f_type = std::stoi(reinterpret_cast<char*>(longnum),NULL,16);
+//   infile.read(reinterpret_cast<char*>(longnum),2);
+//   arch = std::stoi(reinterpret_cast<char*>(longnum),NULL,16);
+//   infile.read(reinterpret_cast<char*>(longnum),2);
+//   f_ver = std::stoi(reinterpret_cast<char*>(longnum),NULL,16);
+//   infile.read(reinterpret_cast<char*>(longnum),2);
+//   num_ch = std::stoi(reinterpret_cast<char*>(longnum),NULL,16);
+//   infile.read(reinterpret_cast<char*>(longnum),8);
+//   chcfg = std::stoi(reinterpret_cast<char*>(longnum),NULL,16);
+//   std::cout << "Configuration Headers:" << std::endl;
+//   std::cout << std::right << std::setw(6) << std::setfill(' ') << std::dec <<
+//   "[Nr]" << ' '; std::cout << std::left << std::hex << std::setw(12) <<
+//   std::setfill(' ') << "Name" << ' '; std::cout << std::hex << std::setw(12)
+//   << std::setfill(' ') << "Type" << ' '; std::cout << std::hex <<
+//   std::setw(8) << std::setfill(' ') << "Addr" << ' '; std::cout << std::hex
+//   << std::setw(6) << std::setfill(' ') << "Offset" << ' '; std::cout <<
+//   std::hex << std::setw(6) << std::setfill(' ') << "Size" << std::endl; while
+//   (next_chcfg_idx < num_ch) {
+//     infile.seekg( chcfg + 1 + next_chcfg_idx*9*8 );
+//     Air64_Chdr config_header;
+//     infile >> std::hex >> config_header.ch_name;
+//     infile >> std::hex >> config_header.ch_type;
+//     infile >> std::hex >> config_header.ch_addr;
+//     infile >> std::hex >> config_header.ch_addr;
+//     infile >> std::hex >> config_header.ch_offset;
+//     infile >> std::hex >> config_header.ch_offset;
+//     infile >> std::hex >> config_header.ch_size;
+//     infile >> std::hex >> config_header.ch_size;
+//     std::cout << std::right << std::dec << "  [" << std::setw(2) <<
+//     std::setfill(' ') << next_chcfg_idx+1 << "]" << ' ' << std::left; if
+//     (config_header.ch_type) {
+//       std::cout << std::hex << std::setw(12) << std::setfill(' ') <<
+//       to_air_cfg_name(config_header.ch_name) << ' '; std::cout << std::hex <<
+//       std::setw(12) << std::setfill(' ') << "PROGBITS" << ' '; std::cout <<
+//       std::right << std::hex << std::setw(8) << std::setfill('0') <<
+//       config_header.ch_addr << ' '; std::cout << std::hex << std::setw(6) <<
+//       std::setfill('0') << config_header.ch_offset << ' '; std::cout <<
+//       std::hex << std::setw(6) << std::setfill('0') << config_header.ch_size
+//       << std::endl;
+//     } else {
+//       std::cout << std::hex << std::setw(12) << std::setfill(' ') << "" << '
+//       '; std::cout << std::hex << std::setw(12) << std::setfill(' ') <<
+//       "NULL" << ' '; std::cout << std::right << std::hex << std::setw(8) <<
+//       std::setfill('0') << config_header.ch_addr << ' '; std::cout <<
+//       std::hex << std::setw(6) << std::setfill('0') <<
+//       config_header.ch_offset << ' '; std::cout << std::hex << std::setw(6)
+//       << std::setfill('0') << config_header.ch_size << std::endl;
+//     }
+//     next_chcfg_idx++;
+//   }
+// }
 
 uint64_t airbin2mem(std::ifstream &infile, volatile uint32_t *tds_va, uint32_t *tds_pa, 
                     volatile uint32_t *data_va, uint32_t *data_pa, int col) {
@@ -514,20 +520,11 @@ int matadd_driver(queue_t *q, int col, int row) {
   }
 
   //
-  // packet to read the output matrix
+  // packet to send the input matrices
   //
 
   uint64_t wr_idx = queue_add_write_index(q, 1);
   uint64_t packet_id = wr_idx % q->size;
-  dispatch_packet_t *pkt_c = (dispatch_packet_t*)(q->base_address_vaddr) + packet_id;
-  air_packet_nd_memcpy(pkt_c, 0, col, 0, 0, 4, 2, dram_paddr+(2*IMAGE_SIZE*sizeof(float)), TILE_WIDTH*sizeof(float), TILE_HEIGHT, IMAGE_WIDTH*sizeof(float), NUM_3D, TILE_WIDTH*sizeof(float), NUM_4D, IMAGE_WIDTH*TILE_HEIGHT*sizeof(float));
-
-  //
-  // packet to send the input matrices
-  //
-
-  wr_idx = queue_add_write_index(q, 1);
-  packet_id = wr_idx % q->size;
   dispatch_packet_t *pkt_a = (dispatch_packet_t*)(q->base_address_vaddr) + packet_id;
   air_packet_nd_memcpy(pkt_a, 0, col, 1, 0, 4, 2, dram_paddr, TILE_WIDTH*sizeof(float), TILE_HEIGHT, IMAGE_WIDTH*sizeof(float), NUM_3D, TILE_WIDTH*sizeof(float), NUM_4D, IMAGE_WIDTH*TILE_HEIGHT*sizeof(float));
 
@@ -535,6 +532,20 @@ int matadd_driver(queue_t *q, int col, int row) {
   packet_id = wr_idx % q->size;
   dispatch_packet_t *pkt_b = (dispatch_packet_t*)(q->base_address_vaddr) + packet_id;
   air_packet_nd_memcpy(pkt_b, 0, col, 1, 1, 4, 2, dram_paddr+(IMAGE_SIZE*sizeof(float)), TILE_WIDTH*sizeof(float), TILE_HEIGHT, IMAGE_WIDTH*sizeof(float), NUM_3D, TILE_WIDTH*sizeof(float), NUM_4D, IMAGE_WIDTH*TILE_HEIGHT*sizeof(float));
+
+  //
+  // packet to read the output matrix
+  //
+
+  wr_idx = queue_add_write_index(q, 1);
+  packet_id = wr_idx % q->size;
+  dispatch_packet_t *pkt_c =
+      (dispatch_packet_t *)(q->base_address_vaddr) + packet_id;
+  air_packet_nd_memcpy(
+      pkt_c, 0, col, 0, 0, 4, 2, dram_paddr + (2 * IMAGE_SIZE * sizeof(float)),
+      TILE_WIDTH * sizeof(float), TILE_HEIGHT, IMAGE_WIDTH * sizeof(float),
+      NUM_3D, TILE_WIDTH * sizeof(float), NUM_4D,
+      IMAGE_WIDTH * TILE_HEIGHT * sizeof(float));
 
   //
   // dispatch the packets to the MB
@@ -643,6 +654,7 @@ int main(int argc, char **argv) {
         air_queue_create(MB_QUEUE_SIZE, HSA_QUEUE_TYPE_SINGLE, &q, agent.handle,
                          0 /* device_id (optional) */);
     assert(create_queue_ret == 0 && "failed to create queue!");
+    assert(q && "failed to map queue!");
     queues.push_back(q);
   }
 
@@ -650,21 +662,26 @@ int main(int argc, char **argv) {
 
   //struct timespec ts_start;
   //struct timespec ts_end;
- 
+  auto segment_size = readairbinsize(infile, col);
+  segment_size.num_rows = num_rows;
+  segment_size.start_row = 0;
+
   uint64_t last_td = airbin2mem(infile,bd_ptr,(uint32_t *)bd_paddr,bram_ptr,paddr,col);
   std::cout << std::endl << "Done writing config data to memory!" << std::endl;
   // Send configuration packet to MicroBlaze
   uint64_t wr_idx = queue_add_write_index(q, 1);
   uint64_t packet_id = wr_idx % q->size;
   dispatch_packet_t* pkt = (dispatch_packet_t*)(q->base_address_vaddr) + packet_id;
-  air_packet_cdma_memcpy(pkt, last_td, uint64_t(bd_paddr), 0xffffffff);
-  pkt->type = 0x31;
-  pkt->arg[3]  = 0;
-  pkt->arg[3] |= ((uint64_t)num_cols)  << 24;
-  pkt->arg[3] |= ((uint64_t)start_col) << 16;
-  pkt->arg[3] |= ((uint64_t)num_rows)  << 8;
-  pkt->arg[3] |= ((uint64_t)start_row);
-  //clock_gettime(CLOCK_BOOTTIME, &ts_start);
+  air_packet_cdma_configure(pkt, last_td, uint64_t(bd_paddr), 0xffffffff,
+                            &segment_size);
+  // air_packet_cdma_memcpy(pkt, last_td, uint64_t(bd_paddr), 0xffffffff);
+  // pkt->type = 0x31;
+  // pkt->arg[3]  = 0;
+  // pkt->arg[3] |= ((uint64_t)num_cols)  << 24;
+  // pkt->arg[3] |= ((uint64_t)start_col) << 16;
+  // pkt->arg[3] |= ((uint64_t)num_rows)  << 8;
+  // pkt->arg[3] |= ((uint64_t)start_row);
+  // clock_gettime(CLOCK_BOOTTIME, &ts_start);
   air_queue_dispatch_and_wait(q, wr_idx, pkt); 
   //clock_gettime(CLOCK_BOOTTIME, &ts_end);
 
@@ -673,14 +690,16 @@ int main(int argc, char **argv) {
 
   std::cout << std::endl << "Done configuring!" << std::endl << std::endl;
 
-  int errors = 0; 
+  int errors = 0;
 
-  if ((strcmp(airbin_name, "addone.airbin") == 0) || 
+  if ((strcmp(airbin_name, "addone.airbin") == 0) ||
+      (strcmp(airbin_name, "addone_gold.airbin") == 0) ||
       (strcmp(airbin_name, "add_one.airbin") == 0)) {
     errors = addone_driver(q,col,row);
   } else if (strcmp(airbin_name, "matadd.airbin") == 0) {
     errors = matadd_driver(q,col,row);
-  } else errors = 1;
+  } else
+    errors = 1;
 
   //munmap(map_axib_base,0x2000000);
 
