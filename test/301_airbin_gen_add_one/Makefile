@@ -37,5 +37,5 @@ run: test.exe addone.airbin
 	sudo ./test.exe
 
 clean::
-	rm -rf test.exe addone.airbin
+	rm -rf test.exe addone.airbin acdc_project core*
 
