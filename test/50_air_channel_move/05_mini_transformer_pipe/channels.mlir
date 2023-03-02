@@ -3,7 +3,7 @@
 module {
   air.channel @channel_5 [1, 1] // D
   air.channel @channel_4 [1, 1] // C
-  air.channel @channel_3 [1, 1] // inout
+  air.channel @channel_3 [1, 1] // partial
   air.channel @channel_2 [1, 1] // output
   air.channel @channel_1 [1, 1] // B
   air.channel @channel_0 [1, 1] // A
